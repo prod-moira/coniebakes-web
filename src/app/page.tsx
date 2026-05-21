@@ -40,7 +40,7 @@ export default function HomePage() {
       <section className="about-section">
         <div className="container about-grid">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/about.svg" alt="About Conie Bakes" className="about-image" />
+          <img src="/assets/about-us.png" alt="About Conie Bakes" className="about-image" />
           <div className="home-section-content about-text">
             <h2 className="section-heading">About Us</h2>
             <p>
