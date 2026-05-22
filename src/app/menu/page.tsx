@@ -6,6 +6,8 @@ import { ProductImage } from '@/components/ProductImage';
 import { ProductModal } from '@/components/ProductModal';
 import { useCart } from '@/context/CartContext';
 import { getProducts, Product } from '@/lib/db';
+import { isCookieProduct, isTwoStepProduct } from '@/lib/variant-utils';
+
 export default function MenuPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +26,11 @@ export default function MenuPage() {
   );
 
   const addFirstVariant = (product: Product) => {
+    if (isCookieProduct(product) || isTwoStepProduct(product)) {
+      setActive(product);
+      return;
+    }
+
     const variant = product.variants[0];
     addToCart(
       {

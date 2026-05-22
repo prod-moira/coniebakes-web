@@ -6,14 +6,20 @@ import { sanitizePhoneInput } from '@/lib/phone';
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', inquiryType: 'Select Inquiry Type', message: '' });
   const [status, setStatus] = useState('');
+  const [feedbackConsent, setFeedbackConsent] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setStatus('Sending...');
+    if (form.inquiryType === 'Feedback' && !feedbackConsent) {
+      setStatus('Please consent to your feedback being posted online.');
+      return;
+    }
+
     const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, feedbackConsent }),
     });
     if (res.ok) {
       setStatus('Message sent successfully.');
@@ -65,6 +71,8 @@ export default function ContactPage() {
           <div className="form-field">
             <label htmlFor="contact-type">Inquiry type *</label>
             <select id="contact-type" required value={form.inquiryType} onChange={(e) => setForm({ ...form, inquiryType: e.target.value })}>
+              <option value="" hidden>Select an option...</option>
+              <option>Bulk Orders</option>
               <option>Special Order Request</option>
               <option>Concern</option>
               <option>Feedback</option>
@@ -76,11 +84,19 @@ export default function ContactPage() {
             <label htmlFor="contact-message">Message *</label>
             <textarea placeholder="Enter your message here..." id="contact-message" required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
           </div>
+          {form.inquiryType === 'Feedback' && (
+            <label className="checkbox-field">
+              <input type="checkbox" checked={feedbackConsent} onChange={(e) => setFeedbackConsent(e.target.checked)} />
+              <span>I consent to my feedback being posted online.</span>
+            </label>
+          )}
 
-          <button type="submit" className="btn-action">
-            Submit
-          </button>
+        <button type="submit" className="btn-action" disabled={form.inquiryType === 'Select Inquiry Type'}>
+          Submit
+        </button>
         </form>
+
+        
 
         {status && <p className={status.includes('successfully') ? 'alert-success' : 'alert-error'} style={{ marginTop: '0.9rem' }}>{status}</p>}
       </div>

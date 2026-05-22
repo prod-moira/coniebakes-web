@@ -27,6 +27,7 @@ export default function CheckoutPage() {
   const { cart, cartTotal, clearCart } = useCart();
   const [offset, setOffset] = useState(0);
   const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [facebook, setFacebook] = useState('');
@@ -36,6 +37,8 @@ export default function CheckoutPage() {
   const [agree, setAgree] = useState(false);
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
+
+  const hasLargeQuantity = cart.some(item => item.quantity >= 6);
 
   const dateList = useMemo(() => {
     const today = new Date();
@@ -83,6 +86,7 @@ export default function CheckoutPage() {
       email: email.trim() || null,
       address: address.trim(),
       deliveryDate: selectedDate,
+      deliveryTime: selectedTime || null,
       items: cart,
       total: cartTotal,
       specialInstructions: specialInstructions.trim() || null,
@@ -104,6 +108,7 @@ export default function CheckoutPage() {
         email: email.trim(),
         address: address.trim(),
         deliveryDate: selectedDate,
+        deliveryTime: selectedTime || null,
         items: cart,
         total: cartTotal,
         specialInstructions: specialInstructions.trim(),
@@ -221,6 +226,39 @@ export default function CheckoutPage() {
               })}
             </div>
           </div>
+
+          <div className="form-field">
+            <label htmlFor="delivery-time" className="date-picker-header">
+              <h3 style={{ marginTop: "0.5rem"}}>Preferred delivery time *</h3>
+            </label>
+            <select required id="delivery-time" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)}>
+              <option value="" hidden>Select a time</option>
+              {(() => {
+                const opts = [];
+                const start = new Date();
+                start.setHours(8, 0, 0, 0);
+                const end = new Date();
+                end.setHours(21, 0, 0, 0);
+                for (let t = start.getTime(); t <= end.getTime(); t += 30 * 60 * 1000) {
+                  const d = new Date(t);
+                  const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                  const value = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                  opts.push(
+                    <option key={value} value={value}>
+                      {label}
+                    </option>,
+                  );
+                }
+                return opts;
+              })()}
+            </select>
+          </div>
+
+          {hasLargeQuantity && (
+            <p className="note-box" style={{ marginTop: '0.6rem' }}>
+              Note: Preferred delivery date might be adjusted due to order quantity.
+            </p>
+          )}
 
           {message && <p className="alert-error">{message}</p>}
 

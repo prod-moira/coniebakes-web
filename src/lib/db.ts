@@ -22,6 +22,7 @@ export interface Order {
   email: string | null;
   address: string;
   deliveryDate: string;
+  deliveryTime: string | null;
   items: OrderItem[];
   total: number;
   specialInstructions: string | null;

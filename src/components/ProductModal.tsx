@@ -4,7 +4,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { ProductImage } from '@/components/ProductImage';
 import { CartItem, useCart } from '@/context/CartContext';
 import { Product } from '@/lib/db';
-import { findCookieVariant, getCookiePacks, getCookieSizes, isCookieProduct } from '@/lib/variant-utils';
+import {
+  findCookieVariant,
+  getCookiePacks,
+  getCookieSizes,
+  isCookieProduct,
+  isTwoStepProduct,
+  getTwoStepSizes,
+  getTwoStepOptions,
+  findTwoStepVariant,
+} from '@/lib/variant-utils';
 
 type ProductModalProps = {
   product: Product;
@@ -15,8 +24,12 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
   const { addToCart } = useCart();
   const cookieProduct = isCookieProduct(product);
 
+    const twoStepProduct = isTwoStepProduct(product);
+
   const [cookieSize, setCookieSize] = useState('');
   const [cookiePack, setCookiePack] = useState('');
+  const [twoStepSize, setTwoStepSize] = useState('');
+  const [twoStepOption, setTwoStepOption] = useState('');
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
@@ -26,13 +39,30 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
     [product.variants, cookieSize],
   );
 
+  const twoStepSizes = useMemo(() => (twoStepProduct ? getTwoStepSizes(product.variants) : []), [product.variants, twoStepProduct]);
+  const twoStepOptions = useMemo(
+    () => (twoStepProduct && twoStepSize ? getTwoStepOptions(product.variants, twoStepSize) : []),
+    [product.variants, twoStepProduct, twoStepSize],
+  );
+
   const selectedVariant = useMemo(() => {
     if (cookieProduct) {
       if (!cookieSize || !cookiePack) return null;
       return findCookieVariant(product.variants, cookieSize, cookiePack) ?? null;
     }
+
+    if (twoStepProduct) {
+      if (!twoStepSize) return null;
+      // if options exist, require option; otherwise match size-only variant
+      if (twoStepOptions.length > 0) {
+        if (!twoStepOption) return null;
+        return findTwoStepVariant(product.variants, twoStepSize, twoStepOption) ?? null;
+      }
+      return findTwoStepVariant(product.variants, twoStepSize, '') ?? null;
+    }
+
     return product.variants[selectedVariantIndex] ?? null;
-  }, [cookieProduct, cookiePack, cookieSize, product.variants, selectedVariantIndex]);
+  }, [cookieProduct, cookiePack, cookieSize, twoStepProduct, twoStepSize, twoStepOption, twoStepOptions.length, product.variants, selectedVariantIndex]);
 
   useEffect(() => {
     if (cookieProduct) {
@@ -45,8 +75,19 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
   }, [product.id, cookieProduct]);
 
   useEffect(() => {
+    if (twoStepProduct) {
+      setTwoStepSize('');
+      setTwoStepOption('');
+    }
+  }, [product.id, twoStepProduct]);
+
+  useEffect(() => {
     if (cookieProduct) setCookiePack('');
   }, [cookieSize, cookieProduct]);
+
+  useEffect(() => {
+    if (twoStepProduct) setTwoStepOption('');
+  }, [twoStepSize, twoStepProduct]);
 
   const addToCartHandler = () => {
     if (!selectedVariant) return;
@@ -111,6 +152,40 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 </>
               )}
             </>
+          ) : twoStepProduct ? (
+            <>
+              <p className="variant-picker-label">Choose size</p>
+              <div className="option-row">
+                {twoStepSizes.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    className={`option-btn ${twoStepSize === size ? 'selected' : ''}`}
+                    onClick={() => setTwoStepSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+
+              {twoStepSize && twoStepOptions.length > 0 && (
+                <>
+                  <p className="variant-picker-label">Choose option</p>
+                  <div className="option-row">
+                    {twoStepOptions.map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        className={`option-btn ${twoStepOption === opt ? 'selected' : ''}`}
+                        onClick={() => setTwoStepOption(opt)}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
           ) : (
             <>
               <p className="variant-picker-label">Choose variant</p>
@@ -133,7 +208,8 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             <div className="selected-variant-box">
               <div>
                 <strong>{selectedVariant.label}</strong>
-                <p className="selected-variant-price">₱{selectedVariant.price.toLocaleString()}</p>
+                <p className="selected-variant-price">₱{(selectedVariant.price * quantity).toLocaleString()}</p>
+                <p style={{ fontSize: '0.8rem', margin: 0, opacity: 0.9 }}>₱{selectedVariant.price.toLocaleString()} each</p>
               </div>
               <div className="qty-controls">
                 <button type="button" onClick={() => setQuantity((qty) => Math.max(1, qty - 1))}>
