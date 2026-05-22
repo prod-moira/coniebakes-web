@@ -150,7 +150,8 @@ export default function CheckoutPage() {
               id="phone"
               type="tel"
               inputMode="numeric"
-              pattern="[0-9+\-\s()]+"
+              pattern="[0-9]{11}"
+              maxLength={11}
               required
               value={phone}
               onChange={(e) => setPhone(sanitizePhoneInput(e.target.value))}

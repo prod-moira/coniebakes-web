@@ -55,7 +55,8 @@ export default function ContactPage() {
               id="contact-phone"
               type="tel"
               inputMode="numeric"
-              pattern="[0-9+\-\s()]+"
+              pattern="[0-9]{11}"
+              maxLength={11}
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: sanitizePhoneInput(e.target.value) })}
             />
