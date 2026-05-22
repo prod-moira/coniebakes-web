@@ -23,7 +23,7 @@ export function normalizeProduct(raw: Partial<Product> & { id: string }): Produc
     storage: raw.storage?.trim() || seed.storage,
     shelfLife: raw.shelfLife?.trim() || seed.shelfLife,
     available: raw.available ?? seed.available,
-    image: resolveProductImage({ id: raw.id, image: raw.image }),
+    image: resolveProductImage({ id: raw.id, image: raw.image ?? '' }),
     variants: Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : seed.variants,
   };
 }
