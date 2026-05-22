@@ -11,11 +11,11 @@ type ProductImageProps = {
 };
 
 export function ProductImage({ productId, image, alt, className = 'product-image' }: ProductImageProps) {
-  const initialSrc = resolveProductImage({ id: productId, image });
+  const initialSrc = resolveProductImage({ id: productId, image: image ?? '' });
   const [src, setSrc] = useState(initialSrc);
 
   useEffect(() => {
-    setSrc(resolveProductImage({ id: productId, image }));
+    setSrc(resolveProductImage({ id: productId, image: image ?? '' }));
   }, [productId, image]);
 
   return (
