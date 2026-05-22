@@ -6,6 +6,9 @@ import { AppShell } from '@/components/AppShell';
 export const metadata: Metadata = {
   title: 'Conie Bakes',
   description: 'Conie Bakes customer website',
+    icons: {
+    icon: '/favicon.png',
+  },
 };
 
 const monteCarlo = MonteCarlo({
