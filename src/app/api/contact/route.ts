@@ -34,7 +34,7 @@ ${message}
     // Send transaction email to owner
     const data = await resend.emails.send({
       from: 'Conie Bakes Inquiries <onboarding@resend.dev>',
-      to: 'coniebakes@gmail.com', // Replace with owner's email in production
+      to: process.env.RESEND_TO_EMAIL ?? 'moirachelseyburbos@gmail.com',
       subject: `New ${inquiryType} from ${name} ✉️`,
       text: emailContent,
     });
