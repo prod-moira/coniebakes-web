@@ -51,11 +51,8 @@ curl http://localhost:3000/api/seed-products
 ## Next Objectives
 
 - [ ] Add images for homepage and menu
-- [ ] Update products, product variety (burnt basque flavors), and prices.
-- [ ] Add *Bulk orders* section
-- [ ] Add time for delivery (checkout)
-- [ ] Implement Resend with coniebakes@gmail.com (Rotate API keys on all platforms)
 - [ ] User test the UI
+- [ ] Implement Resend with coniebakes@gmail.com (Rotate API keys on all platforms)
 - [ ] Begin `coniebakes-admin` — separate Next.js project for owner-facing management once site is officially deployed
 
 ## Notes
