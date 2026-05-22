@@ -49,11 +49,11 @@ npm run dev
 curl http://localhost:3000/api/seed-products
 ```
 ## Next Objectives
- 
-- [ ] Implement Resend — connect order and contact forms to send actual emails
-- [ ] Menu UI edits — polish card layout, modal, and overall browsing experience
-- [ ] QA email outputs — verify order and inquiry email formats are correct
-- [ ] Begin `coniebakes-admin` — separate Next.js project for owner-facing management
+
+- [ ] Add images for homepage and menu
+- [ ] Implement Resend with coniebakes@gmail.com (Rotate API keys on all platforms)
+- [ ] User test the UI
+- [ ] Begin `coniebakes-admin` — separate Next.js project for owner-facing management once site is officially deployed
 
 ## Notes
 
