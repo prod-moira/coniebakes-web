@@ -60,6 +60,16 @@ a {
   display: block;
 }
 
+@media (max-width: 768px) {
+  .navbar{
+    justify-content: space-around;
+  }
+  
+  .brand-logo-link {
+    display: none;
+  }
+}
+
 .main-nav {
   display: flex;
   align-items: center;
@@ -180,14 +190,16 @@ button {
 }
 
 .page-title {
-  margin: 0 0 0.35rem;
+  /* margin: 0 0 0.35rem; */
   color: var(--gold);
   font-size: 2.2rem;
+  margin: 1rem 1rem 0 1rem;
 }
 
 .page-subtitle {
   margin: 0 0 1.5rem;
   opacity: 0.92;
+  margin: 0 1rem;
 }
 
 .panel {
@@ -195,6 +207,7 @@ button {
   /* border: 1px solid #c9a84c66; */
   border-radius: 10px;
   padding: 1.25rem;
+  margin: 1rem;
 }
 
 .btn-action {
@@ -582,6 +595,16 @@ button {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+
+  /* padding: 1rem; */
+  margin: 1rem 0;
+}
+
+@media (max-width: 820px) {
+  .menu-card {
+    padding: 1rem;
+    margin: 1rem;
+  }
 }
 
 .product-image {
