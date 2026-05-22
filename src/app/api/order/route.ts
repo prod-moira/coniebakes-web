@@ -16,22 +16,60 @@ export async function POST(request: Request) {
       specialInstructions
     } = body;
 
-    const emailContent = `
-Hi Conie Bakes! 🎂
+const emailContent = `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+  
+  <div style="background: #8B1A1A; padding: 24px; text-align: center;">
+    <h1 style="color: #C9A84C; margin: 0; font-size: 24px;">🎂 Conie Bakes</h1>
+    <p style="color: #F5F0E8; margin: 4px 0 0;">New Order Received</p>
+  </div>
 
-New order from ${customerName}
+  <div style="padding: 24px;">
 
-Contact: ${phoneNumber} | ${facebookLink} | ${email || 'None'}
-Delivery: ${address} on ${deliveryDate}
+    <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px;">Customer Details</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr><td style="padding: 6px 0; color: #666; width: 120px;"><strong>Name</strong></td><td>${customerName}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Phone</strong></td><td>${phoneNumber}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Facebook</strong></td><td>${facebookLink}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Email</strong></td><td>${email || 'Not provided'}</td></tr>
+    </table>
 
-Order:
-${items.map((item: any) => `- ${item.productName} — ${item.variantLabel} x${item.quantity} — ₱${(item.price * item.quantity).toLocaleString()}`).join('\n')}
+    <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Delivery Details</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr><td style="padding: 6px 0; color: #666; width: 120px;"><strong>Address</strong></td><td>${address}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Date</strong></td><td>${deliveryDate}</td></tr>
+    </table>
 
-Total: ₱${total.toLocaleString()}
+    <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Order Summary</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      ${items.map((item: any) => `
+      <tr>
+        <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+          <strong>${item.productName}</strong><br/>
+          <span style="color: #666; font-size: 14px;">${item.variantLabel} x${item.quantity}</span>
+        </td>
+        <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0; text-align: right; font-weight: bold;">
+          ₱${(item.price * item.quantity).toLocaleString()}
+        </td>
+      </tr>`).join('')}
+      <tr>
+        <td style="padding: 12px 0;"><strong style="font-size: 16px;">Total</strong></td>
+        <td style="padding: 12px 0; text-align: right; color: #8B1A1A; font-size: 18px; font-weight: bold;">₱${total.toLocaleString()}</td>
+      </tr>
+    </table>
 
-Notes: ${specialInstructions || 'None'}
-    `;
+    <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Special Instructions</h2>
+    <p style="color: #444; background: #f9f9f9; padding: 12px; border-radius: 4px; margin: 0;">${specialInstructions || 'None'}</p>
 
+  </div>
+
+  <div style="background: #f5f0e8; padding: 16px; text-align: center; font-size: 13px; color: #666;">
+    Order placed via <a href="https://coniebakes.vercel.app" style="color: #8B1A1A;">coniebakes.vercel.app</a><br/>
+    Please contact the customer via Facebook or mobile to confirm.
+  </div>
+
+</div>
+`;
     console.log('📬 [EMAIL SYSTEM] Simulated Email Notification to Owner:');
     console.log('==================================================');
     console.log(emailContent);
@@ -53,7 +91,7 @@ Notes: ${specialInstructions || 'None'}
       from: 'Conie Bakes <onboarding@resend.dev>',
       to: process.env.RESEND_TO_EMAIL ?? 'moirachelseyburbos@gmail.com',
       subject: `New Order Request from ${customerName} 🎂`,
-      text: emailContent,
+      html: emailContent,
     });
 
     return NextResponse.json({ success: true, data });
