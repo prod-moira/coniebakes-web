@@ -62,8 +62,8 @@ export default function CheckoutPage() {
     return (
       <section className="container page-section">
         <h1 className="page-title">Checkout</h1>
-        <p>Your cart is empty.</p>
-        <Link href="/menu" className="btn-secondary">
+        <p className="page-subtitle">Your cart is empty.</p>
+        <Link href="/menu" className="btn-secondary after-checkout-btn">
           Go to menu
         </Link>
       </section>
