@@ -148,9 +148,14 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
           )}
         </div>
 
-        <button type="button" className="btn-action" style={{ marginTop: '0.9rem', width: '100%' }} disabled={!selectedVariant} onClick={addToCartHandler}>
-          Add to Cart
-        </button>
+        <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.9rem' }}>
+          <button type="button" className="btn-secondary" onClick={onClose}>
+            Back
+          </button>
+          <button type="button" className="btn-action" style={{ flex: 1 }} disabled={!selectedVariant} onClick={addToCartHandler}>
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
   );

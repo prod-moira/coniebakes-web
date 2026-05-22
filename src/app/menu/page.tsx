@@ -40,7 +40,7 @@ export default function MenuPage() {
   if (loading) {
     return (
       <section className="container page-section">
-        <p>Loading menu...</p>
+        <p className="menu-loading">Loading menu...</p>
       </section>
     );
   }

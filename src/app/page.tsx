@@ -1,8 +1,14 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { OrderPlacedModal } from '@/components/OrderPlacedModal';
 
 export default function HomePage() {
   return (
     <>
+      <Suspense fallback={null}>
+        <OrderPlacedModal />
+      </Suspense>
+
       <section
         className="hero-section"
         style={{
@@ -20,7 +26,7 @@ export default function HomePage() {
       </section>
 
       <section className="bestseller-section">
-        <div className="container bestseller-grid">
+        <div className="container home-stack bestseller-stack">
           <div className="home-section-content">
             <h2 className="section-heading">Best Seller</h2>
             <h3 className="home-section-subtitle">Burnt Basque Cheesecakes</h3>
@@ -38,9 +44,7 @@ export default function HomePage() {
       </section>
 
       <section className="about-section">
-        <div className="container about-grid">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/about-us.png" alt="About Conie Bakes" className="about-image" />
+        <div className="container home-stack about-stack">
           <div className="home-section-content about-text">
             <h2 className="section-heading">About Us</h2>
             <p>
@@ -52,6 +56,8 @@ export default function HomePage() {
               basque cheesecakes to our chewy cookies, we bake to bring comfort to your table.
             </p>
           </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/about-us.png" alt="About Conie Bakes" className="about-image" />
         </div>
       </section>
     </>

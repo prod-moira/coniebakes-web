@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
-import { getDeliveryCounts, placeOrder } from '@/lib/db';
+import { placeOrder } from '@/lib/db';
+import { sanitizePhoneInput } from '@/lib/phone';
 
 const MIN_DAYS = 3;
 const MAX_DAYS = 30;
@@ -21,6 +23,7 @@ function formatDateLabel(date: Date) {
 }
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const { cart, cartTotal, clearCart } = useCart();
   const [offset, setOffset] = useState(0);
   const [selectedDate, setSelectedDate] = useState('');
@@ -31,10 +34,8 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [agree, setAgree] = useState(false);
-  const [availability, setAvailability] = useState<Record<string, number>>({});
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const dateList = useMemo(() => {
     const today = new Date();
@@ -52,11 +53,6 @@ export default function CheckoutPage() {
   }, [offset]);
 
   const maxOffset = MAX_DAYS - MIN_DAYS - WINDOW_SIZE + 1;
-
-  useEffect(() => {
-    const keys = dateList.map(formatLocalDate);
-    getDeliveryCounts(keys).then(setAvailability);
-  }, [dateList]);
 
   if (!cart.length) {
     return (
@@ -115,11 +111,7 @@ export default function CheckoutPage() {
     });
 
     clearCart();
-    setMessage(
-      'Your order has been sent! 🎂 Please wait for the owner to contact you via Facebook or your mobile number to confirm your order and arrange payment.',
-    );
-    setShowSuccess(true);
-    setSending(false);
+    router.push('/?orderPlaced=1');
   };
 
   return (
@@ -154,7 +146,15 @@ export default function CheckoutPage() {
 
           <div className="form-field">
             <label htmlFor="phone">Phone number *</label>
-            <input id="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <input
+              id="phone"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9+\-\s()]+"
+              required
+              value={phone}
+              onChange={(e) => setPhone(sanitizePhoneInput(e.target.value))}
+            />
           </div>
 
           <div className="form-field">
@@ -207,47 +207,27 @@ export default function CheckoutPage() {
             <div className="date-grid">
               {dateList.map((date) => {
                 const iso = formatLocalDate(date);
-                const count = availability[iso] ?? 0;
-                const full = count >= 12;
                 return (
                   <button
                     key={iso}
                     type="button"
-                    disabled={full}
                     className={`date-btn ${selectedDate === iso ? 'selected' : ''}`}
                     onClick={() => setSelectedDate(iso)}
                   >
                     <span>{formatDateLabel(date)}</span>
-                    <span>{full ? 'FULL' : `${count}/12`}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {!showSuccess && message && <p className="alert-error">{message}</p>}
+          {message && <p className="alert-error">{message}</p>}
 
           <button className="btn-action" type="submit" disabled={sending || !selectedDate || !agree}>
             {sending ? 'Placing Order...' : 'Place Order'}
           </button>
         </form>
       </div>
-
-      {showSuccess && (
-        <div className="modal-overlay">
-          <div className="modal-panel">
-            <p>{message}</p>
-            <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.8rem' }}>
-              <Link href="/menu" className="btn-action">
-                Back to Menu
-              </Link>
-              <button type="button" className="btn-secondary" onClick={() => setShowSuccess(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

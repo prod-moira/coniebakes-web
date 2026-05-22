@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { sanitizePhoneInput } from '@/lib/phone';
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', inquiryType: 'Concern', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', inquiryType: 'Select Inquiry Type', message: '' });
   const [status, setStatus] = useState('');
 
   async function submit(e: React.FormEvent) {
@@ -14,7 +15,12 @@ export default function ContactPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     });
-    setStatus(res.ok ? 'Message sent successfully.' : 'Unable to send your message.');
+    if (res.ok) {
+      setStatus('Message sent successfully.');
+      setForm({ name: '', email: '', phone: '', inquiryType: 'Select Inquiry Type', message: '' });
+    } else {
+      setStatus('Unable to send your message.');
+    }
   }
 
   return (
@@ -42,15 +48,24 @@ export default function ContactPage() {
           </div>
 
           <div className="form-field">
-            <label htmlFor="contact-phone">Phone (optional)</label>
-            <input id="contact-phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <label htmlFor="contact-phone">
+              Phone *
+            </label>
+            <input required
+              id="contact-phone"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9+\-\s()]+"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: sanitizePhoneInput(e.target.value) })}
+            />
           </div>
 
           <div className="form-field">
             <label htmlFor="contact-type">Inquiry type *</label>
             <select id="contact-type" required value={form.inquiryType} onChange={(e) => setForm({ ...form, inquiryType: e.target.value })}>
-              <option>Concern</option>
               <option>Special Order Request</option>
+              <option>Concern</option>
               <option>Feedback</option>
               <option>Other</option>
             </select>
@@ -58,7 +73,7 @@ export default function ContactPage() {
 
           <div className="form-field">
             <label htmlFor="contact-message">Message *</label>
-            <textarea id="contact-message" required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+            <textarea placeholder="Enter your message here..." id="contact-message" required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
           </div>
 
           <button type="submit" className="btn-action">

@@ -1,5 +1,5 @@
 import { db, isMockFirebase } from './firebase';
-import { collection, doc, getDoc, getDocs, query, runTransaction, setDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { isStaleProductCache, normalizeProduct, normalizeProducts } from './product-utils';
 import { Product, SEED_PRODUCTS } from './seed-products';
 
@@ -127,46 +127,18 @@ export async function getProducts(): Promise<Product[]> {
   }
 }
 
-export async function getDeliveryCount(date: string): Promise<number> {
-  if (isMockFirebase || !db) return getMockData().deliveries[date] ?? 0;
-  const snap = await getDoc(doc(db, 'deliveries', date));
-  return snap.exists() ? (snap.data().count ?? 0) : 0;
-}
-
-export async function getDeliveryCounts(dates: string[]): Promise<Record<string, number>> {
-  const result: Record<string, number> = {};
-  await Promise.all(
-    dates.map(async (date) => {
-      result[date] = await getDeliveryCount(date);
-    }),
-  );
-  return result;
-}
-
 export async function placeOrder(orderData: Omit<Order, 'status'>): Promise<{ success: boolean; error?: string; orderId?: string }> {
-  const date = orderData.deliveryDate;
   if (isMockFirebase || !db) {
     const data = getMockData();
-    const count = data.deliveries[date] ?? 0;
-    if (count >= 12) return { success: false, error: 'Selected date is already full.' };
-    data.deliveries[date] = count + 1;
     data.orders.push({ ...orderData, status: 'pending', createdAt: Date.now(), id: `order-${Date.now()}` });
     saveMockData(data);
     return { success: true, orderId: `mock-${Date.now()}` };
   }
 
   try {
-    const deliveryRef = doc(db, 'deliveries', date);
     const orderRef = doc(collection(db, 'orders'));
-    const result = await runTransaction(db, async (tx) => {
-      const snap = await tx.get(deliveryRef);
-      const count = snap.exists() ? (snap.data().count ?? 0) : 0;
-      if (count >= 12) throw new Error('Selected date is already full.');
-      tx.set(deliveryRef, { count: count + 1 }, { merge: true });
-      tx.set(orderRef, { ...orderData, status: 'pending', createdAt: Date.now() });
-      return { orderId: orderRef.id };
-    });
-    return { success: true, orderId: result.orderId };
+    await setDoc(orderRef, { ...orderData, status: 'pending', createdAt: Date.now() });
+    return { success: true, orderId: orderRef.id };
   } catch (error: unknown) {
     return { success: false, error: error instanceof Error ? error.message : 'Unable to place order.' };
   }

@@ -237,15 +237,15 @@ button {
 }
 
 .btn-secondary {
-  display: inline-flex;
-  margin: 1rem;
+  display: block;
+  margin: 0.2rem 1rem 0 1rem;
   border: 1px solid var(--gold);
   border-radius: 999px;
-  padding: 0.55rem 1rem;
+  padding: 0.35rem 1rem;
   cursor: pointer;
   font-weight: 600;
-  color: var(--text);
-  background: var(--dark-red-deep);
+  color: var(--gold);
+  background: var(--bg);
 }
 
 .hero-section {
@@ -261,13 +261,13 @@ button {
 .hero-content h1 {
   font-family: var(--font-monte-carlo), cursive;
   font-weight: 500;
-  font-size: clamp(3rem, 8vw, 5rem);
+  font-size: clamp(3.5rem, 8vw, 5rem);
   margin: 0;
 }
 
 .hero-content p {
-  margin-top: 0.5rem;
-  font-size: 1.2rem;
+  margin-top: 0.2rem;
+  font-size: clamp(1.2rem, 3vw, 1.2rem);
 }
 
 .bestseller-section,
@@ -639,7 +639,7 @@ button {
 }
 
 .menu-card-price {
-  font-weight: 600;
+  font-weight: 500;
   color: var(--gold);
 }
 
@@ -662,6 +662,23 @@ button {
 .cart-add-btn .basket-icon {
   width: 1.35rem;
   height: 1.35rem;
+}
+
+.modal-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  margin: 0;
+  color: var(--gold);
+  font-size: clamp(1rem, 4vw, 1.5rem);
+}
+
+.modal-message {
+  text-align: center;
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(0.85rem, 3vw, 1rem);
 }
 
 .modal-overlay {
@@ -770,4 +787,34 @@ button {
 .cart-empty-panel {
   text-align: center;
   padding: 2rem 1rem;
+}
+
+.menu-loading {
+  text-align: center;
+  color: var(--gold);
+  font-style: italic;
+}
+
+.home-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+@media (min-width: 860px) {
+  .bestseller-stack {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+
+  .about-stack {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+
+  .about-stack .about-image {
+    order: -1;
+  }
 }
