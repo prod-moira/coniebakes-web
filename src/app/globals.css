@@ -365,12 +365,20 @@ button {
   font-size: 0.95rem;
 }
 
+.summary-line--last {
+  border-bottom: none;
+}
+
 .cart-line {
   display: grid;
   gap: 0.65rem;
   padding: 0.85rem 0;
   border-bottom: 1px solid #c9a84c33;
   font-size: 0.95rem;
+}
+
+.cart-line:last-of-type {
+  border-bottom: none;
 }
 
 @media (min-width: 720px) {
@@ -641,6 +649,13 @@ button {
   min-height: 1rem;
 }
 
+.menu-card-description {
+  margin: 0.5rem 0 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+  color: var(--gold);
+}
+
 .menu-card-footer {
   margin-top: auto;
   padding-top: 0.75rem;
@@ -651,8 +666,8 @@ button {
 }
 
 .menu-card-price {
-  font-weight: 500;
-  color: var(--gold);
+  font-weight: 400;
+  color: var(--text);
 }
 
 .cart-add-btn {

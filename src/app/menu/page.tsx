@@ -63,19 +63,22 @@ export default function MenuPage() {
             <ProductImage productId={product.id} image={product.image} alt={product.name} />
             <div className="menu-card-body">
               <h3>{product.name}</h3>
+              <p className="menu-card-description">{product.description}</p>
               <div className="menu-card-footer">
                 <span className="menu-card-price">From ₱{minPrices[product.id]?.toLocaleString()}</span>
-                <button
-                  type="button"
-                  className="cart-add-btn"
-                  aria-label={`Add ${product.name}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addFirstVariant(product);
-                  }}
-                >
-                  <BasketIcon size={22} />
-                </button>
+                  {!isCookieProduct(product) && !isTwoStepProduct(product) && (
+                    <button
+                      type="button"
+                      className="cart-add-btn"
+                      aria-label={`Add ${product.name}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addFirstVariant(product);
+                      }}
+                    >
+                      <BasketIcon size={22} />
+                    </button>
+                  )}
               </div>
             </div>
           </article>

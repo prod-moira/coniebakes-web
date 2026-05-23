@@ -127,8 +127,11 @@ export default function CheckoutPage() {
       <div className="checkout-layout">
         <aside className="panel checkout-summary">
           <h2>Order Summary</h2>
-          {cart.map((item) => (
-            <div key={`${item.productId}-${item.variantLabel}`} className="summary-line">
+            {cart.map((item, index) => (
+              <div
+                key={`${item.productId}-${item.variantLabel}`}
+                className={`summary-line${index === cart.length - 1 ? ' summary-line--last' : ''}`}
+              >
               <span>
                 {item.productName} — {item.variantLabel} x{item.quantity}
               </span>
@@ -262,7 +265,7 @@ export default function CheckoutPage() {
 
           {message && <p className="alert-error">{message}</p>}
 
-          <button className="btn-action" type="submit" disabled={sending || !selectedDate || !agree}>
+          <button className="btn-action" type="submit" disabled={sending || !selectedDate || !selectedTime || !agree}>
             {sending ? 'Placing Order...' : 'Place Order'}
           </button>
         </form>
