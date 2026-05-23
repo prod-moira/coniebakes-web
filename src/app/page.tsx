@@ -39,7 +39,7 @@ export default function HomePage() {
             </Link>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/burnt-basque.svg" alt="Burnt Basque Cheesecake" className="bestseller-image" />
+          <img src="/assets/best-seller.jpg" alt="Burnt Basque Cheesecake" className="bestseller-image" />
         </div>
       </section>
 
@@ -57,7 +57,7 @@ export default function HomePage() {
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/about-us.png" alt="About Conie Bakes" className="about-image" />
+          <img src="/assets/about-us.jpg" alt="About Conie Bakes" className="about-image" />
         </div>
       </section>
     </>
