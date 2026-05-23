@@ -11,6 +11,7 @@ export async function POST(request: Request) {
       email,
       address,
       deliveryDate,
+      deliveryTime,
       items,
       total,
       specialInstructions
@@ -37,7 +38,7 @@ const emailContent = `
     <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Delivery Details</h2>
     <table style="width: 100%; border-collapse: collapse;">
       <tr><td style="padding: 6px 0; color: #666; width: 120px;"><strong>Address</strong></td><td>${address}</td></tr>
-      <tr><td style="padding: 6px 0; color: #666;"><strong>Date</strong></td><td>${deliveryDate}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Date & Time</strong></td><td>${deliveryDate} at ${deliveryTime}</td></tr>
     </table>
 
     <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Order Summary</h2>
