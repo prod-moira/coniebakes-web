@@ -29,7 +29,7 @@ export default function HomePage() {
         <div className="container home-stack bestseller-stack">
           <div className="home-section-content">
             <h2 className="section-heading">Best Seller</h2>
-            <h3 className="home-section-subtitle">Burnt Basque Cheesecakes</h3>
+            <h3 className="home-section-subtitle">Burnt Basque Cheesecake - Plain</h3>
             <p>
               This is what Conie Bakes is known for — our signature burnt basque cheesecakes with a beautifully
               caramelized top, creamy center, and that cozy, homemade warmth in every slice.

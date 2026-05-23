@@ -10,8 +10,8 @@ export default function CartPage() {
     return (
       <section className="container page-section">
         <div className="panel cart-empty-panel">
-          <h1 className="page-title">Your Cart</h1>
-          <p>Your cart is empty.</p>
+          <h1 className="page-title">Cart</h1>
+          <p style={{ fontStyle: 'italic', margin: '1rem 0' }}>Your cart is empty.</p>
           <Link href="/menu" className="btn-action" style={{ marginTop: '1rem' }}>
             Browse Menu
           </Link>

@@ -122,7 +122,7 @@ export default function CheckoutPage() {
   return (
     <section className="container page-section">
       <h1 className="page-title">Checkout</h1>
-      <p className="page-subtitle">Review your order and share delivery details.</p>
+      <p className="page-subtitle">Review your order and enter delivery details.</p>
 
       <div className="checkout-layout">
         <aside className="panel checkout-summary">

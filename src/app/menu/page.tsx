@@ -55,8 +55,7 @@ export default function MenuPage() {
   return (
     <section className="container page-section">
       <h1 className="page-title">Menu</h1>
-      <p className="page-subtitle">Tap a card for details, or use the basket icon to add the default size.</p>
-
+      <p className="page-subtitle">Browse the cards to discover available flavors, sizes, and variations you can add to your order.</p>
       <div className="menu-grid">
         {products.map((product) => (
           <article key={product.id} className="menu-card" onClick={() => setActive(product)}>
