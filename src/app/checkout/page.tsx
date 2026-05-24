@@ -148,8 +148,13 @@ export default function CheckoutPage() {
           <h2>Customer Details</h2>
 
           <div className="form-field">
-            <label htmlFor="customer-name">Customer name *</label>
+            <label htmlFor="customer-name">Name *</label>
             <input id="customer-name" required value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="email">Email *</label>
+            <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
 
           <div className="form-field">
@@ -169,11 +174,6 @@ export default function CheckoutPage() {
           <div className="form-field">
             <label htmlFor="facebook">Facebook profile link *</label>
             <input id="facebook" type="url" required value={facebook} onChange={(e) => setFacebook(e.target.value)} />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="email">Email (optional)</label>
-            <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
 
           <div className="form-field">

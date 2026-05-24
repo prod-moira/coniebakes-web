@@ -240,10 +240,10 @@ button {
 
 .btn-secondary {
   display: block;
-  margin: 0.2rem 1rem 0 1rem;
+  margin: 0.2rem 0.rem 0 0.5rem;
   border: 1px solid var(--gold);
   border-radius: 999px;
-  padding: 0.35rem 1rem;
+  padding: 0.35rem 1.8rem;
   cursor: pointer;
   font-weight: 600;
   color: var(--gold);
@@ -269,7 +269,7 @@ button {
 
 .hero-content p {
   margin-top: 0.2rem;
-  font-size: clamp(1.2rem, 3vw, 1.2rem);
+  font-size: clamp(1.2rem, 1vw, 1.2rem);
 }
 
 .bestseller-section,
@@ -736,6 +736,17 @@ button {
   border: 1px solid var(--gold);
   border-radius: 14px;
   padding: 1rem;
+}
+
+.modal-panel h2 {
+    border-bottom: 1px solid #c9a84c66;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0;
+}
+
+.modal-panel p {
+    margin: 0.5rem 0 0;
+    color: var(--text);
 }
 
 .variant-picker {
