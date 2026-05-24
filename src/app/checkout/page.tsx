@@ -241,7 +241,7 @@ export default function CheckoutPage() {
                 const start = new Date();
                 start.setHours(8, 0, 0, 0);
                 const end = new Date();
-                end.setHours(21, 0, 0, 0);
+                end.setHours(18, 30, 0, 0);
                 for (let t = start.getTime(); t <= end.getTime(); t += 30 * 60 * 1000) {
                   const d = new Date(t);
                   const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });

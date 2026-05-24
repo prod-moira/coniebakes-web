@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BasketIcon } from '@/components/BasketIcon';
@@ -11,6 +12,13 @@ import { CartProvider, useCart } from '@/context/CartContext';
 function Header() {
   const pathname = usePathname();
   const { itemCount } = useCart();
+
+const [cartHovered, setCartHovered] = useState(false);
+useEffect(() => {
+  setCartHovered(false);
+}, [pathname]);
+const isCartActive = pathname === '/cart' || cartHovered || pathname === '/checkout';
+const cartIconSrc = isCartActive ? '/assets/selected-basket.png' : '/assets/basket.png';
 
   return (
     <header className="site-header">
@@ -28,10 +36,17 @@ function Header() {
           <Link href="/contact" className={pathname === '/contact' ? 'active' : ''}>
             Contact
           </Link>
-          <Link href="/cart" className="cart-link" aria-label="Cart">
-            <BasketIcon size={24} />
+          <Link
+            href="/cart"
+            className="cart-link"
+            aria-label="Cart"
+            onMouseEnter={() => setCartHovered(true)}
+            onMouseLeave={() => setCartHovered(false)}
+          >
+            <BasketIcon size={24} src={cartIconSrc} />
             {itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
           </Link>
+          
         </nav>
       </div>
     </header>

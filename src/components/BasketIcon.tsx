@@ -1,25 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type BasketIconProps = {
   className?: string;
   size?: number;
+  src?: string;
 };
 
-export function BasketIcon({ className = 'basket-icon', size = 22 }: BasketIconProps) {
-  const [src, setSrc] = useState('/assets/basket.png');
+export function BasketIcon({ className = 'basket-icon', size = 22, src = '/assets/basket.png' }: BasketIconProps) {
+  const [currentSrc, setCurrentSrc] = useState(src);
+
+  useEffect(() => {
+    setCurrentSrc(src);
+  }, [src]);
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={src}
+      src={currentSrc}
       alt=""
       width={size}
       height={size}
       className={className}
       onError={() => {
-        if (src !== '/assets/basket.svg') setSrc('/assets/basket.svg');
+        if (currentSrc !== '/assets/basket.svg') setCurrentSrc('/assets/basket.svg');
       }}
     />
   );
