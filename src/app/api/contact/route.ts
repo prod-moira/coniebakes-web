@@ -56,7 +56,7 @@ const emailContent = `
     const data = await resend.emails.send({
       from: 'Conie Bakes Inquiries <onboarding@resend.dev>',
       to: process.env.RESEND_TO_EMAIL ?? 'moirachelseyburbos@gmail.com',
-      subject: `New ${inquiryType} from ${name} ✉️`,
+      subject: `New ${inquiryType} from ${name}`,
       html: emailContent,
     });
 

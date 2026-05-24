@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { sanitizePhoneInput } from '@/lib/phone';
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', inquiryType: 'Select Inquiry Type', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', inquiryType: '', message: '' });
   const [status, setStatus] = useState('');
   const [feedbackConsent, setFeedbackConsent] = useState(false);
 
@@ -23,7 +23,7 @@ export default function ContactPage() {
     });
     if (res.ok) {
       setStatus('Message sent successfully.');
-      setForm({ name: '', email: '', phone: '', inquiryType: 'Select Inquiry Type', message: '' });
+      setForm({ name: '', email: '', phone: '', inquiryType: '', message: '' });
     } else {
       setStatus('Unable to send your message.');
     }
@@ -70,13 +70,23 @@ export default function ContactPage() {
 
           <div className="form-field">
             <label htmlFor="contact-type">Inquiry type *</label>
-            <select id="contact-type" required value={form.inquiryType} onChange={(e) => setForm({ ...form, inquiryType: e.target.value })}>
-              <option value="" hidden>Select an option...</option>
-              <option>Bulk Orders</option>
-              <option>Special Order Request</option>
-              <option>Concern</option>
-              <option>Feedback</option>
-              <option>Other</option>
+            <select 
+              id="contact-type" 
+              required 
+              value={form.inquiryType}
+              // defaultValue=""
+              style={{ color: form.inquiryType ? 'var(--text)' : 'gray' }}
+              onChange={(e) => {
+                setForm({ ...form, inquiryType: e.target.value });
+                e.target.style.color = 'var(--text)';
+              }}
+            >
+              <option value="" hidden disabled>Select an inquiry type</option>
+              <option style={{ color: 'var(--text)' }}>Feedback</option>
+              <option style={{ color: 'var(--text)' }}>Concern</option>
+              <option style={{ color: 'var(--text)' }}>Special Order Request</option>
+              <option style={{ color: 'var(--text)' }}>Bulk Orders</option>
+              <option style={{ color: 'var(--text)' }}>Other</option>
             </select>
           </div>
 
@@ -87,13 +97,13 @@ export default function ContactPage() {
           {form.inquiryType === 'Feedback' && (
             <label className="checkbox-field">
               <input type="checkbox" checked={feedbackConsent} onChange={(e) => setFeedbackConsent(e.target.checked)} />
-              <span>I consent to my feedback being posted online.</span>
+              <span>I allow this submission to be shared publicly as a testimonial or review.</span>
             </label>
           )}
 
-        <button type="submit" className="btn-action" disabled={form.inquiryType === 'Select Inquiry Type'}>
-          Submit
-        </button>
+          <button type="submit" className="btn-action" disabled={!form.inquiryType}>
+            Submit
+          </button>
         </form>
 
         

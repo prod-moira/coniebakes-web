@@ -10,6 +10,7 @@ export async function POST(request: Request) {
       facebookLink,
       email,
       address,
+      payment,
       deliveryDate,
       deliveryTime,
       items,
@@ -33,6 +34,7 @@ const emailContent = `
       <tr><td style="padding: 6px 0; color: #666;"><strong>Phone</strong></td><td>${phoneNumber}</td></tr>
       <tr><td style="padding: 6px 0; color: #666;"><strong>Facebook</strong></td><td>${facebookLink}</td></tr>
       <tr><td style="padding: 6px 0; color: #666;"><strong>Email</strong></td><td>${email || 'Not provided'}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Mode of Payment</strong></td><td>${payment}</td></tr>
     </table>
 
     <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Delivery Details</h2>
@@ -91,7 +93,7 @@ const emailContent = `
     const data = await resend.emails.send({
       from: 'Conie Bakes <onboarding@resend.dev>',
       to: process.env.RESEND_TO_EMAIL ?? 'moirachelseyburbos@gmail.com',
-      subject: `New Order Request from ${customerName} 🎂`,
+      subject: `New Order Request from ${customerName}`,
       html: emailContent,
     });
 

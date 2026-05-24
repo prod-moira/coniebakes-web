@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
@@ -33,6 +33,7 @@ export default function CheckoutPage() {
   const [facebook, setFacebook] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
+  const [payment, setPayment] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [agree, setAgree] = useState(false);
   const [message, setMessage] = useState('');
@@ -57,21 +58,17 @@ export default function CheckoutPage() {
 
   const maxOffset = MAX_DAYS - MIN_DAYS - WINDOW_SIZE + 1;
 
-  if (!cart.length) {
-    return (
-      <section className="container page-section">
-        <h1 className="page-title">Checkout</h1>
-        <p className="page-subtitle">Your cart is empty.</p>
-        <Link href="/menu" className="btn-secondary after-checkout-btn">
-          Go to menu
-        </Link>
-      </section>
-    );
+const [orderPlaced, setOrderPlaced] = useState(false);
+
+useEffect(() => {
+  if (!cart.length && !orderPlaced) {
+    router.replace('/cart');
   }
+}, [cart, orderPlaced]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDate || !name.trim() || !phone.trim() || !facebook.trim() || !address.trim() || !agree) {
+    if (!selectedDate || !name.trim() || !phone.trim() || !facebook.trim() || !address.trim() || !payment.trim() || !agree) {
       setMessage('Please complete all required fields.');
       return;
     }
@@ -85,6 +82,7 @@ export default function CheckoutPage() {
       facebookLink: facebook.trim(),
       email: email.trim() || null,
       address: address.trim(),
+      payment: payment.trim(),
       deliveryDate: selectedDate,
       deliveryTime: selectedTime || null,
       items: cart,
@@ -111,10 +109,12 @@ export default function CheckoutPage() {
         deliveryTime: selectedTime || null,
         items: cart,
         total: cartTotal,
+        payment: payment.trim(),
         specialInstructions: specialInstructions.trim(),
       }),
     });
 
+    setOrderPlaced(true);
     clearCart();
     router.push('/?orderPlaced=1');
   };
@@ -182,19 +182,30 @@ export default function CheckoutPage() {
           </div>
 
           <div className="form-field">
-            <label htmlFor="instructions">Special instructions (optional)</label>
-            <textarea id="instructions" value={specialInstructions} onChange={(e) => setSpecialInstructions(e.target.value)} />
+            <label htmlFor="payment">Payment method *</label>
+              <select 
+                id="payment" 
+                required
+                value={payment}
+                style={{ color: payment ? 'var(--text)' : 'gray' }}
+                onChange={(e) => {
+                  setPayment(e.target.value);
+                  e.target.style.color = 'var(--text)';
+                }}
+              >
+                <option value="" disabled hidden>
+                  Select a payment method
+                </option>
+                <option value="GCash" style={{ color: 'var(--text)' }}>GCash</option>
+                <option value="PayMaya" style={{ color: 'var(--text)' }}>PayMaya</option>
+                <option value="Bank Transfer (BDO/BPI)" style={{ color: 'var(--text)' }}>Bank Transfer (BDO/BPI)</option>
+                <option value="Other" style={{ color: 'var(--text)' }}>Other</option>
+              </select>
           </div>
-
-          <p className="note-box">
-            After placing your order, the owner will reach out to you via your provided <span>Facebook</span> or <span>mobile number</span> to
-            confirm your order and arrange payment.
+          
+          <p className="note-box" style={{ marginBottom: '0.6rem' }}>
+            Delivery fees are shouldered by the customer and will be discussed upon order confirmation.
           </p>
-
-          <label className="checkbox-field">
-            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
-            <span>I agree to be contacted via <b>Facebook</b> or <b>mobile number</b> for order confirmation.</span>
-          </label>
 
           <div className="date-picker">
             <div className="date-picker-header">
@@ -234,8 +245,17 @@ export default function CheckoutPage() {
             <label htmlFor="delivery-time" className="date-picker-header">
               <h3 style={{ marginTop: "0.5rem"}}>Preferred delivery time *</h3>
             </label>
-            <select required id="delivery-time" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)}>
-              <option value="" hidden>Select a time</option>
+            <select 
+              required 
+              id="delivery-time" 
+              value={selectedTime} 
+              style={{ color: selectedTime ? 'var(--text)' : 'gray' }}
+              onChange={(e) => {
+                setSelectedTime(e.target.value);
+                e.target.style.color = 'var(--text)';
+              }}
+            >
+              <option value="" hidden disabled>Select a time</option>
               {(() => {
                 const opts = [];
                 const start = new Date();
@@ -247,7 +267,7 @@ export default function CheckoutPage() {
                   const label = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
                   const value = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
                   opts.push(
-                    <option key={value} value={value}>
+                    <option key={value} value={value} style={{ color: 'var(--text)' }}>
                       {label}
                     </option>,
                   );
@@ -258,10 +278,30 @@ export default function CheckoutPage() {
           </div>
 
           {hasLargeQuantity && (
-            <p className="note-box" style={{ marginTop: '0.6rem' }}>
-              Note: Preferred delivery date might be adjusted due to order quantity.
+            <p className="note-box style={{ margin: '0.2rem', backgroundColor: 'var(--dark-red)', fontStyle: 'italic' }}" >
+              Preferred delivery date might be adjusted due to order quantity.
             </p>
           )}
+
+          <div className="form-field">
+            <label htmlFor="instructions">Special instructions (optional)</label>
+            <textarea id="instructions" value={specialInstructions} onChange={(e) => setSpecialInstructions(e.target.value)} />
+          </div>
+
+          <p className='note-box' style={{ margin: '0.1rem 0 0 0', backgroundColor: 'var(--dark-red)' }}>
+             Your information will be used solely for order processing and delivery. It will not be shared with third parties.
+          </p>
+
+          <p className="note-box" style={{ margin: '0 0 0.1rem 0', backgroundColor: 'var(--dark-red)' }}>
+            After placing your order, the admin will reach out to you via your provided <span>Facebook</span> or <span>mobile number</span> to
+            confirm your order and arrange payment.
+          </p>
+
+          <label className="checkbox-field">
+            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+            <span>I agree to be contacted via <b>Facebook</b> or <b>mobile number</b> for order confirmation.</span>
+          </label>
+
 
           {message && <p className="alert-error">{message}</p>}
 

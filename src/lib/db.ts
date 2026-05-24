@@ -21,6 +21,7 @@ export interface Order {
   facebookLink: string;
   email: string | null;
   address: string;
+  payment: string;
   deliveryDate: string;
   deliveryTime: string | null;
   items: OrderItem[];
