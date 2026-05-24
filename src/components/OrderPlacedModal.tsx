@@ -29,9 +29,11 @@ export function OrderPlacedModal() {
           Please wait for the owner to contact you via Facebook or your mobile number to
           confirm your order and arrange payment.
         </p>
-        <button type="button" className="btn-secondary modal-message" style={{ margin: '0.8rem', justifyContent: 'center' }} onClick={close}>
-          Close
-        </button>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '0.8rem' }}>
+          <button type="button" className="btn-secondary" onClick={close}>
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
