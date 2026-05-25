@@ -22,7 +22,7 @@ const emailContent = `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
   
   <div style="background: #8B1A1A; padding: 24px; text-align: center;">
-    <h1 style="color: #F5F0E8; margin: 0; font-size: 24px; font-family:Times New Roman, serif;">Conie Bakes</h1>
+    <h1 style="color: #F5F0E8; margin: 0; font-size: 24px; font-family: Georgia, Times New Roman, serif;">Conie Bakes</h1>
     <p style="color: #C9A84C; margin: 4px 0 0;">New Order Received</p>
   </div>
 

@@ -11,7 +11,7 @@ const emailContent = `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
   
   <div style="background: #8B1A1A; padding: 24px; text-align: center;">
-    <h1 style="color: #F5F0E8; margin: 0; font-size: 24px; font-family:Times New Roman, serif;">Conie Bakes</h1>
+    <h1 style="color: #F5F0E8; margin: 0; font-size: 24px; font-family: Georgia, Times New Roman, serif;">Conie Bakes</h1>
     <p style="color: #C9A84C; margin: 4px 0 0;">New ${inquiryType}</p>
   </div>
 
@@ -22,7 +22,7 @@ const emailContent = `
       <tr><td style="padding: 6px 0; color: #666; width: 120px;"><strong>Name</strong></td><td>${name}</td></tr>
       <tr><td style="padding: 6px 0; color: #666;"><strong>Email</strong></td><td>${email}</td></tr>
       <tr><td style="padding: 6px 0; color: #666;"><strong>Phone</strong></td><td>${phone || 'Not provided'}</td></tr>
-      <tr><td style="padding: 6px 0; color: #666;"><strong>Feedback consent</strong></td><td>${consentLabel}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Consent to post</strong></td><td>${consentLabel}</td></tr>
     </table>
 
     <h2 style="color: #8B1A1A; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Message</h2>
