@@ -259,7 +259,7 @@ useEffect(() => {
               {(() => {
                 const opts = [];
                 const start = new Date();
-                start.setHours(8, 0, 0, 0);
+                start.setHours(14, 0, 0, 0);
                 const end = new Date();
                 end.setHours(18, 30, 0, 0);
                 for (let t = start.getTime(); t <= end.getTime(); t += 30 * 60 * 1000) {
