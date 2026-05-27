@@ -334,7 +334,7 @@ button {
   border: 1px solid #c9a84c66;
   object-fit: cover;
   min-height: 250px;
-  max-height: 400px;
+  max-height: 450px;
   background: var(--dark-red-deep);
 }
 
