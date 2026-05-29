@@ -260,14 +260,6 @@ button {
   padding: 1rem;
 }
 
-@media (max-width: 768px) {
-  .hero-section {
-    min-height: 100svh; /* better than 100vh on mobile */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
 .hero-content h1 {
   font-family: var(--font-monte-carlo), cursive;
   font-weight: 500;
@@ -342,7 +334,7 @@ button {
   border: 1px solid #c9a84c66;
   object-fit: cover;
   min-height: 250px;
-  max-height: 450px;
+  max-height: 400px;
   background: var(--dark-red-deep);
 }
 
