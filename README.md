@@ -1,4 +1,4 @@
-# Conie Bakes — Ordering Platform
+# Conie Bakes — Ordering Platform 
 
 A full-stack ordering system for **Conie Bakes** (@coniebakes), a home bakery based in the Philippines. Built to replace a Facebook Messenger-based ordering workflow with a structured, guided digital experience.
 
