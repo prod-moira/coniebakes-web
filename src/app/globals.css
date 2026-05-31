@@ -359,6 +359,14 @@ button {
   color: var(--gold);
 }
 
+.error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-weight: 500;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .summary-line {
   display: flex;
   justify-content: space-between;
