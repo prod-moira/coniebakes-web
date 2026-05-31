@@ -153,19 +153,19 @@ export default function CheckoutPage() {
         <form className="panel checkout-form" onSubmit={handleSubmit(submit)}>
           <h2>Customer Details</h2>
 
-          <div className="form-field">
+          <div className={errors.name ? 'form-field-error' : 'form-field'}>
             <label htmlFor="name">Customer Name *</label>
             <input id="name" maxLength={50} {...register('name')} />
             {errors.name && <p className="error">{errors.name.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.email ? 'form-field-error' : 'form-field'}>
             <label htmlFor="email">Email *</label>
             <input id="email" type="email" {...register('email')} />
             {errors.email && <p className="error">{errors.email.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.facebook ? 'form-field-error' : 'form-field'}>
             <label htmlFor="facebook">Facebook profile link *</label>
             <input
               id="facebook"
@@ -175,7 +175,7 @@ export default function CheckoutPage() {
             {errors.facebook && <p className="error">{errors.facebook.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.phone ? 'form-field-error' : 'form-field'}>
             <label htmlFor="phone">Phone Number *</label>
             <input
               id="phone"
@@ -190,13 +190,13 @@ export default function CheckoutPage() {
             {errors.phone && <p className="error">{errors.phone.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.address ? 'form-field-error' : 'form-field'}>
             <label htmlFor="address">Delivery address *</label>
             <textarea id="address" {...register('address')} minLength={10} maxLength={200} />
             {errors.address && <p className="error">{errors.address.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.payment ? 'form-field-error' : 'form-field'}>
             <label htmlFor="payment">Payment method *</label>
             <select
               id="payment"
@@ -301,7 +301,7 @@ export default function CheckoutPage() {
             </p>
           )}
 
-          <div className="form-field">
+          <div className={errors.specialInstructions ? 'form-field-error' : 'form-field'}>
             <label htmlFor="instructions">Special instructions (optional)</label>
             <textarea id="instructions" {...register('specialInstructions')} />
               {errors.specialInstructions && <p className="error">{errors.specialInstructions.message}</p>}

@@ -30,11 +30,9 @@ email: z
     .max(200, "Address is too long. Please enter a valid delivery address")
     .refine((val) => val.trim().split(/\s+/).length > 1, "Please enter a more specific delivery address"),
 
-  payment: z.string().min(1, "Please select a payment method"),
-
-  deliveryDate: z.string().min(1, "Please select a delivery date"),
-
-  deliveryTime: z.string().min(1, "Please select a delivery time"),
+  payment: z.string(),
+  deliveryDate: z.string(),
+  deliveryTime: z.string(),
 
   specialInstructions: z.string().max(300).optional(),
 

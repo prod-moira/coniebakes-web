@@ -8,6 +8,8 @@
   --dark-red-deep: #3a0c0c;
   --btn-green-top: #061a05;
   --btn-green-bottom: #11340e;
+  --error: red;
+  /* --error: #ff4c4c;  */
 }
 
 * {
@@ -360,7 +362,7 @@ button {
 }
 
 .error {
-  color: red;
+  color: var(--error);
   font-size: 0.85rem;
   margin-top: 4px;
   font-weight: 500;
@@ -452,20 +454,24 @@ button {
   display: grid;
   gap: 0.9rem;
 }
-
-.form-field {
+.form-field,
+.form-field-error {
   display: grid;
   gap: 0.35rem;
 }
 
-.form-field label {
+.form-field label,
+.form-field-error label {
   font-size: 0.9rem;
   color: var(--gold);
 }
 
 .form-field input,
 .form-field textarea,
-.form-field select {
+.form-field select,
+.form-field-error input,
+.form-field-error textarea,
+.form-field-error select {
   width: 100%;
   border: 1px solid #c9a84c88;
   border-radius: 10px;
@@ -481,11 +487,25 @@ button {
   outline-offset: 1px;
 }
 
-.form-field textarea {
+.form-field-error input:focus,
+.form-field-error textarea:focus,
+.form-field-error select:focus {
+  outline: 2px solid var(--error);
+  outline-offset: 1px;
+}
+
+
+.form-field-error input,
+.form-field-error textarea,
+.form-field-error select {
+  border-color: var(--error);
+}
+
+.form-field textarea,
+.form-field-error textarea {
   min-height: 96px;
   resize: vertical;
 }
-
 .note-box {
   margin: 0;
   padding: 0.8rem;
