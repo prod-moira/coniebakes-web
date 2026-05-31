@@ -26,8 +26,9 @@ email: z
 
   address: z
     .string()
-    .min(10, "Please enter a valid delivery address")
-    .max(200, "Please enter a valid delivery address"),
+    .min(10, "Address is too short. Please enter a valid delivery address")
+    .max(200, "Address is too long. Please enter a valid delivery address")
+    .refine((val) => val.trim().split(/\s+/).length > 1, "Please enter a more specific delivery address"),
 
   payment: z.string().min(1, "Please select a payment method"),
 
