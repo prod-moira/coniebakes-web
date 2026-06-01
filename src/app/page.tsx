@@ -34,9 +34,9 @@ export default function HomePage() {
               This is what Conie Bakes is known for — our signature burnt basque cheesecakes with a beautifully
               caramelized top, creamy center, and that cozy, homemade warmth in every slice.
             </p>
-            <Link href="/menu" className="btn-action" style={{ marginTop: '0.5rem' }}>
+            {/* <Link href="/menu" className="btn-action" style={{ marginTop: '0.5rem' }}>
               Order Now
-            </Link>
+            </Link> */}
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/best-seller.jpg" alt="Burnt Basque Cheesecake" className="bestseller-image" />
@@ -51,10 +51,10 @@ export default function HomePage() {
               Conie Bakes started baking as a hobby during the pandemic and was founded in 2020. Our baker is a lovely
               mom of 4 who bakes from the heart — turning everyday moments into something warm, sweet, and memorable.
             </p>
-            <p>
+            {/* <p>
               Every cake and cookie is still made in small batches with care, patience, and love. From our signature burnt
               basque cheesecakes to our chewy cookies, we bake to bring comfort to your table.
-            </p>
+            </p> */}
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/about-us.jpg" alt="About Conie Bakes" className="about-image" />

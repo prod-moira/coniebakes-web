@@ -253,13 +253,26 @@ button {
 }
 
 .hero-section {
-  min-height: 100vh;
+  min-height: calc(100vh - 40px);
   background-size: cover;
   background-position: center;
   display: grid;
   place-items: center;
   text-align: center;
   padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: calc(100svh - 40px); /* better than 100vh on mobile */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bestseller-image,
+  .about-image {
+    width: 100vh;
+    height: 90vw;
+  }
 }
 
 .hero-content h1 {
@@ -336,7 +349,7 @@ button {
   border: 1px solid #c9a84c66;
   object-fit: cover;
   min-height: 250px;
-  max-height: 400px;
+  max-height: 450px;
   background: var(--dark-red-deep);
 }
 
