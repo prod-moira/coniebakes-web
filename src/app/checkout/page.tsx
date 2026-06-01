@@ -120,7 +120,8 @@ export default function CheckoutPage() {
 
     setOrderPlaced(true);
     clearCart();
-    router.push('/?orderPlaced=1');
+    sessionStorage.setItem('orderPlaced', '1');
+    router.replace('/');
   };
 
   return (

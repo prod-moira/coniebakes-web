@@ -4,15 +4,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export function OrderPlacedModal() {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('orderPlaced') === '1') {
+    if (sessionStorage.getItem('orderPlaced') === '1') {
+      sessionStorage.removeItem('orderPlaced');
       setOpen(true);
     }
-  }, [searchParams]);
+  }, []);
 
   const close = () => {
     setOpen(false);
