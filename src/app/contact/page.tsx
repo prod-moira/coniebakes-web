@@ -2,32 +2,49 @@
 
 import { useState } from 'react';
 import { sanitizePhoneInput } from '@/lib/phone';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { contactSchema, ContactFormData } from '@/lib/schemas/formSchema';
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', inquiryType: '', message: '' });
   const [status, setStatus] = useState('');
-  const [feedbackConsent, setFeedbackConsent] = useState(false);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setStatus('Sending...');
-    if (form.inquiryType === 'Feedback' && !feedbackConsent) {
-      setStatus('Please consent to your feedback being posted online.');
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      inquiryType: '',
+      message: '',
+      feedbackConsent: false, // add this
+    },
+  });
+
+  const inquiryType = watch('inquiryType');
+
+  const submit = async (data: ContactFormData) => {
 
     const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, feedbackConsent }),
+      body: JSON.stringify(data),
     });
+
     if (res.ok) {
       setStatus('Message sent successfully.');
-      setForm({ name: '', email: '', phone: '', inquiryType: '', message: '' });
+      reset();
     } else {
       setStatus('Unable to send your message.');
     }
-  }
+  };
 
   return (
     <section className="container page-section">
@@ -36,50 +53,42 @@ export default function ContactPage() {
 
       <div className="panel contact-panel">
         <h2>Send a Message</h2>
-        <form className="contact-form" onSubmit={submit}>
-          <div className="form-field">
+        <form className="contact-form" onSubmit={handleSubmit(submit)}>
+
+          <div className={errors.name ? 'form-field-error' : 'form-field'}>
             <label htmlFor="contact-name">Name *</label>
-            <input id="contact-name" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <input id="contact-name" {...register('name')} />
+            {errors.name && <p className="error">{errors.name.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.email ? 'form-field-error' : 'form-field'}>
             <label htmlFor="contact-email">Email *</label>
-            <input
-              id="contact-email"
-              required
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
+            <input id="contact-email" type="email" {...register('email')} />
+            {errors.email && <p className="error">{errors.email.message}</p>}
           </div>
 
-          <div className="form-field">
-            <label htmlFor="contact-phone">
-              Phone *
-            </label>
-            <input required
+          <div className={errors.phone ? 'form-field-error' : 'form-field'}>
+            <label htmlFor="contact-phone">Phone *</label>
+            <input
               id="contact-phone"
               type="tel"
               inputMode="numeric"
-              pattern="[0-9]{11}"
               maxLength={11}
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: sanitizePhoneInput(e.target.value) })}
+              {...register('phone', {
+                onChange: (e) => {
+                  e.target.value = sanitizePhoneInput(e.target.value);
+                },
+              })}
             />
+            {errors.phone && <p className="error">{errors.phone.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.inquiryType ? 'form-field-error' : 'form-field'}>
             <label htmlFor="contact-type">Inquiry type *</label>
-            <select 
-              id="contact-type" 
-              required 
-              value={form.inquiryType}
-              // defaultValue=""
-              style={{ color: form.inquiryType ? 'var(--text)' : 'gray' }}
-              onChange={(e) => {
-                setForm({ ...form, inquiryType: e.target.value });
-                e.target.style.color = 'var(--text)';
-              }}
+            <select
+              id="contact-type"
+              style={{ color: inquiryType ? 'var(--text)' : 'gray' }}
+              {...register('inquiryType')}
             >
               <option value="" hidden disabled>Select an inquiry type</option>
               <option style={{ color: 'var(--text)' }}>Feedback</option>
@@ -88,27 +97,43 @@ export default function ContactPage() {
               <option style={{ color: 'var(--text)' }}>Bulk Orders</option>
               <option style={{ color: 'var(--text)' }}>Other</option>
             </select>
+            {errors.inquiryType && <p className="error">{errors.inquiryType.message}</p>}
           </div>
 
-          <div className="form-field">
+          <div className={errors.message ? 'form-field-error' : 'form-field'}>
             <label htmlFor="contact-message">Message *</label>
-            <textarea placeholder="Enter your message here..." id="contact-message" required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+            <textarea
+              placeholder="Enter your message here..."
+              id="contact-message"
+              {...register('message')}
+            />
+            {errors.message && <p className="error">{errors.message.message}</p>}
           </div>
-          {form.inquiryType === 'Feedback' && (
+
+          {inquiryType === 'Feedback' && (
             <label className="checkbox-field">
-              <input type="checkbox" checked={feedbackConsent} onChange={(e) => setFeedbackConsent(e.target.checked)} />
+              <input type="checkbox" {...register('feedbackConsent')} />
               <span>I allow this submission to be shared publicly as a testimonial or review.</span>
             </label>
           )}
 
-          <button type="submit" className="btn-action" disabled={!form.inquiryType}>
-            Submit
+        <button
+          type="submit"
+          className="btn-action"
+          disabled={isSubmitting || !inquiryType || Object.keys(errors).length > 0}
+          >
+            {isSubmitting ? 'Sending...' : 'Submit'}
           </button>
         </form>
 
-        
-
-        {status && <p className={status.includes('successfully') ? 'alert-success' : 'alert-error'} style={{ marginTop: '0.9rem' }}>{status}</p>}
+        {status && (
+          <p
+            className={status.includes('successfully') ? 'alert-success' : 'alert-error'}
+            style={{ marginTop: '0.9rem' }}
+          >
+            {status}
+          </p>
+        )}
       </div>
     </section>
   );

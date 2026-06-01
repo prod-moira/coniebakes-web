@@ -42,3 +42,32 @@ email: z
 });
 
 export type CheckoutFormData = z.infer<typeof checkoutSchema>;
+
+export const contactSchema = z.object({
+  name: z
+    .string()
+    .min(2, "Name is too short")
+    .max(50, "Name is too long")
+    .regex(/^[A-Za-zÀ-ÿ\s'-.]+$/, "Invalid characters in name")
+    .refine((val) => val.trim().split(/\s+/).length >= 2, "Please enter your full name"),
+
+  email: z
+    .string()
+    .email("Invalid email address")
+    .refine((val) => val.split('@')[0].length >= 3, "Please input a valid email address"),
+
+  phone: z
+    .string()
+    .regex(/^09[0-9]{9}$/, "Please input a valid phone number."),
+
+  inquiryType: z.string(),
+
+  message: z
+    .string()
+    .min(10, "Message is too short")
+    .max(500, "Message is too long"),
+
+    feedbackConsent: z.boolean().optional(),
+});
+
+export type ContactFormData = z.infer<typeof contactSchema>;
