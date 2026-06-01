@@ -934,6 +934,13 @@ button {
   object-fit: contain;
 }
 
+@media (max-width: 640px) {
+  .carousel-slide {
+    object-fit: cover;
+    height: 35vh;
+  }
+}
+
 .carousel-slide--active {
   display: block;
 }
@@ -954,14 +961,14 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  opacity: 1;
+  transition: opacity 1s ease;
   z-index: 3;
 }
 
-.carousel-track:hover .carousel-arrow {
+/* .carousel-track:hover .carousel-arrow {
   opacity: 1;
-}
+} */
 
 .carousel-arrow--prev { left: 0.5rem; }
 .carousel-arrow--next { right: 0.5rem; }
