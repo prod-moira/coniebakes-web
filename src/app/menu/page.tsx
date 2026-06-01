@@ -59,7 +59,7 @@ export default function MenuPage() {
       <div className="menu-grid">
         {products.map((product) => (
           <article key={product.id} className="menu-card" onClick={() => setActive(product)}>
-            <ProductImage productId={product.id} image={product.image} alt={product.name} />
+            <ProductImage productId={product.id} image={product.images[0]} alt={product.name} />
             <div className="menu-card-body">
               <h3>{product.name}</h3>
               <p className="menu-card-description">{product.description}</p>

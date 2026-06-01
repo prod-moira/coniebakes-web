@@ -13,7 +13,7 @@ export interface Product {
   storage: string;
   shelfLife: string;
   available: boolean;
-  image: string;
+  images: string[];
 }
 
 export const SEED_PRODUCTS: Product[] = [
@@ -35,7 +35,7 @@ export const SEED_PRODUCTS: Product[] = [
     storage: 'Refrigerated/chilled',
     shelfLife: '4-5 days',
     available: true,
-    image: '/assets/burnt-basque.svg',
+    images: ['/assets/burnt-basque.jpg'],
   },
   {
     id: 'chocolate-cake',
@@ -50,6 +50,6 @@ export const SEED_PRODUCTS: Product[] = [
     storage: 'Refrigerated',
     shelfLife: '4-5 days',
     available: true,
-    image: '/assets/chocolate-cake.svg',
+    images: ['/assets/choco-cake.jpg'],
   },
 ];

@@ -2,16 +2,21 @@ import { Product, SEED_PRODUCTS } from './seed-products';
 
 const SEED_BY_ID = Object.fromEntries(SEED_PRODUCTS.map((product) => [product.id, product]));
 
-export function resolveProductImage(product: Pick<Product, 'id' | 'image'> | null | undefined): string {
-  if (!product) return '/assets/hero.svg';
-  if (product.image?.startsWith('/')) return product.image;
+export function resolveProductImages(product: Pick<Product, 'id' | 'images'> | null | undefined): string[] {
+  if (!product) return ['/assets/hero.svg'];
+  if (product.images?.length > 0) return product.images;
   const seed = SEED_BY_ID[product.id];
-  return seed?.image ?? '/assets/hero.svg';
+  return seed?.images ?? ['/assets/hero.svg'];
 }
 
 export function normalizeProduct(raw: Partial<Product> & { id: string }): Product | null {
   const seed = SEED_BY_ID[raw.id];
   if (!seed) return null;
+
+  // handle legacy single `image` field from old Firestore docs
+  const rawImages = (raw as any).image && !raw.images
+    ? [(raw as any).image]
+    : raw.images;
 
   return {
     ...seed,
@@ -23,7 +28,7 @@ export function normalizeProduct(raw: Partial<Product> & { id: string }): Produc
     storage: raw.storage?.trim() || seed.storage,
     shelfLife: raw.shelfLife?.trim() || seed.shelfLife,
     available: raw.available ?? seed.available,
-    image: resolveProductImage({ id: raw.id, image: raw.image ?? '' }),
+    images: resolveProductImages({ id: raw.id, images: rawImages ?? [] }),
     variants: Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : seed.variants,
   };
 }
@@ -37,5 +42,5 @@ export function normalizeProducts(rawProducts: Array<Partial<Product> & { id: st
 
 export function isStaleProductCache(products: Product[]): boolean {
   if (products.length !== SEED_PRODUCTS.length) return true;
-  return products.some((product) => !product.image || !product.description || !product.variants?.length);
+  return products.some((product) => !product.images?.length || !product.description || !product.variants?.length);
 }

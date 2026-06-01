@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { resolveProductImage } from '@/lib/product-utils';
+import { resolveProductImages } from '@/lib/product-utils';
 
 type ProductImageProps = {
   productId: string;
@@ -11,11 +11,11 @@ type ProductImageProps = {
 };
 
 export function ProductImage({ productId, image, alt, className = 'product-image' }: ProductImageProps) {
-  const initialSrc = resolveProductImage({ id: productId, image: image ?? '' });
+  const initialSrc = resolveProductImages({ id: productId, images: image ? [image] : [] })[0];
   const [src, setSrc] = useState(initialSrc);
 
   useEffect(() => {
-    setSrc(resolveProductImage({ id: productId, image: image ?? '' }));
+    setSrc(resolveProductImages({ id: productId, images: image ? [image] : [] })[0]);
   }, [productId, image]);
 
   return (

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { ProductImage } from '@/components/ProductImage';
+import { ImageCarousel } from '@/components/ImageCarousel';
 import { CartItem, useCart } from '@/context/CartContext';
 import { Product } from '@/lib/db';
 import {
@@ -107,7 +108,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-        <ProductImage productId={product.id} image={product.image} alt={product.name} className="product-image" />
+        <ImageCarousel images={product.images} alt={product.name} className="product-image" />
         <h2>{product.name}</h2>
         <p>{product.description}</p>
         <p>
