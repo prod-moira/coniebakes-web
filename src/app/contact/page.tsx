@@ -5,6 +5,7 @@ import { sanitizePhoneInput } from '@/lib/phone';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema, ContactFormData } from '@/lib/schemas/formSchema';
+import { placeInquiry } from '@/lib/db';
 
 export default function ContactPage() {
   const [status, setStatus] = useState('');
@@ -31,6 +32,18 @@ export default function ContactPage() {
   const inquiryType = watch('inquiryType');
 
   const submit = async (data: ContactFormData) => {
+    const result = await placeInquiry({
+      name: data.name.trim(),
+      email: data.email.trim(),
+      phone: data.phone.trim(),
+      inquiryType: data.inquiryType as 'Concern' | 'Special Order Request' | 'Feedback' | 'Other',
+      message: data.message.trim(),
+    });
+
+    if (!result.success) {
+      setStatus('Unable to send your message.');
+      return;
+    }
 
     const res = await fetch('/api/contact', {
       method: 'POST',

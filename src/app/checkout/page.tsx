@@ -116,7 +116,7 @@ export default function CheckoutPage() {
         items: cart,
         total: cartTotal,
       }),
-    }),
+    });
 
     setOrderPlaced(true);
     clearCart();
