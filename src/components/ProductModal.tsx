@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ProductImage } from '@/components/ProductImage';
 import { ImageCarousel } from '@/components/ImageCarousel';
 import { CartItem, useCart } from '@/context/CartContext';
@@ -65,6 +65,42 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
     return product.variants[selectedVariantIndex] ?? null;
   }, [cookieProduct, cookiePack, cookieSize, twoStepProduct, twoStepSize, twoStepOption, twoStepOptions.length, product.variants, selectedVariantIndex]);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    const el = modalRef.current;
+    if (!el) return;
+
+    const start = el.scrollTop;
+    const end = el.scrollHeight - el.clientHeight;
+    const distance = end - start;
+    const duration = 250; // ms, increase for slower
+    let startTime: number | null = null;
+
+    const easeInOut = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      el.scrollTop = start + distance * easeInOut(progress);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+  };
+
+  useEffect(() => {
+    if (cookieSize) scrollToBottom();
+  }, [cookieSize]);
+
+  useEffect(() => {
+    if (twoStepSize) scrollToBottom();
+  }, [twoStepSize]);
+
+  useEffect(() => {
+    if (selectedVariant) scrollToBottom();
+  }, [selectedVariant]);
+
   useEffect(() => {
     if (cookieProduct) {
       setCookieSize('');
@@ -107,7 +143,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-panel" ref={modalRef} onClick={(e) => e.stopPropagation()}>
         <ImageCarousel images={product.images} alt={product.name} className="product-image" />
         <h2>{product.name}</h2>
         <p>{product.description}</p>
