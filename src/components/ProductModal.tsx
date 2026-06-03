@@ -149,16 +149,22 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
         <table>
           <tbody>
             <tr>
+              <td colSpan={2} style= {{ 
+              paddingTop: '0.25rem', 
+              borderBottom: '2px solid #c9a84c33', 
+              paddingBottom: '0.75rem',
+              fontSize: '1rem' 
+              }}>
+              {product.description}
+              </td>
+            </tr>
+            <tr>
               <th>Storage</th>
               <td>{product.storage}</td>
             </tr>
             <tr>
               <th>Recommended consumption</th>
               <td>{product.shelfLife}</td>
-            </tr>
-              <tr>
-              <th>Description</th>
-              <td>{product.description}</td>
             </tr>
           </tbody>
         </table>
