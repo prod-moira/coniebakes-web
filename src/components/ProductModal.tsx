@@ -146,13 +146,22 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
       <div className="modal-panel" ref={modalRef} onClick={(e) => e.stopPropagation()}>
         <ImageCarousel images={product.images} alt={product.name} className="product-image" />
         <h2>{product.name}</h2>
-        <p>{product.description}</p>
-        <p>
-          <strong>Storage:</strong> {product.storage}
-        </p>
-        <p>
-          <strong>Recommended consumption:</strong> {product.shelfLife}
-        </p>
+        <table>
+          <tbody>
+            <tr>
+              <th>Storage</th>
+              <td>{product.storage}</td>
+            </tr>
+            <tr>
+              <th>Recommended consumption</th>
+              <td>{product.shelfLife}</td>
+            </tr>
+              <tr>
+              <th>Description</th>
+              <td>{product.description}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <div className="variant-picker">
           {cookieProduct ? (
@@ -244,9 +253,10 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
           {selectedVariant && (
             <div className="selected-variant-box">
               <div>
-                <strong>{selectedVariant.label}</strong>
-                <p className="selected-variant-price">₱{(selectedVariant.price * quantity).toLocaleString()}</p>
-                <p style={{ fontSize: '0.8rem', margin: 0, opacity: 0.9 }}>₱{selectedVariant.price.toLocaleString()} each</p>
+                <strong>{product.name}</strong>
+                <p style={{ margin: '0.2rem 0 0', fontSize: '0.8rem', opacity: 0.9 }}> {selectedVariant.label}</p>
+                <p className="selected-variant-price" style={{ fontSize: '1rem', fontWeight: 500 }}> ₱{(selectedVariant.price * quantity).toLocaleString()}</p>
+                {/* <p style={{ fontSize: '0.8rem', margin: '0.2rem 0 0', opacity: 0.9}}>₱{selectedVariant.price.toLocaleString()} each</p> */}
               </div>
               <div className="qty-controls">
                 <button type="button" onClick={() => setQuantity((qty) => Math.max(1, qty - 1))}>

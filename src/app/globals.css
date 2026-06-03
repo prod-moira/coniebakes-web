@@ -774,7 +774,7 @@ button {
   background: var(--panel);
   border: 1px solid var(--gold);
   border-radius: 14px;
-  padding: 1rem;
+  padding: 1.25rem;
   scrollbar-width: none; /* Firefox */
 }
 
@@ -782,8 +782,24 @@ button {
   display: none; /* Chrome/Safari */
 }
 
+.modal-panel table {
+  width: 100%;
+  /* border-collapse: collapse; */
+  border-color: var(--gold);
+  margin-top: 0.75rem;
+  text-align: left;
+}
+
+.modal-panel th:first-child,
+.modal-panel td {
+  font-weight: 500;
+  padding: 0.50rem 0.25rem;
+  border-bottom: 1px solid #c9a84c33;
+  font-size: 1rem;
+}
+
 .modal-panel h2 {
-    border-bottom: 1px solid #c9a84c66;
+    border-bottom: 2px solid #c9a84c66;
     padding-bottom: 0.35rem;
     margin-bottom: 0;
 }
@@ -799,10 +815,14 @@ button {
   gap: 0.65rem;
 }
 
-.variant-picker-label {
-  margin: 0;
-  color: var(--gold);
-  font-size: 0.92rem;
+.variant-picker .variant-picker-label {
+  color: var(--text);
+  margin: 1rem 0 0.35rem;
+  font-family: var(--font-body-serif), cursive;
+  font-weight: 600;
+  font-size: 1.125rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #c9a84c66; 
 }
 
 .option-row {
@@ -828,7 +848,7 @@ button {
 }
 
 .selected-variant-box {
-  margin-top: 0.35rem;
+  margin-top: 0.55rem;
   padding: 0.75rem;
   border: 1px solid #c9a84c66;
   border-radius: 10px;
@@ -848,6 +868,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  padding: 0;
+  margin: 0.5rem;
 }
 
 .qty-controls button {
@@ -911,7 +933,6 @@ button {
   }
 }
 
-  /* ── Carousel ─────────────────────────────────────────── */
 /* ── Carousel ─────────────────────────────────────────── */
 
 .carousel {
@@ -965,10 +986,6 @@ button {
   transition: opacity 1s ease;
   z-index: 3;
 }
-
-/* .carousel-track:hover .carousel-arrow {
-  opacity: 1;
-} */
 
 .carousel-arrow--prev { left: 0.5rem; }
 .carousel-arrow--next { right: 0.5rem; }
