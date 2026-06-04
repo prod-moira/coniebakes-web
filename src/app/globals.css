@@ -191,6 +191,12 @@ button {
   padding: 2rem 0 3rem;
 }
 
+@media (max-width: 768px) {
+  .page-section {
+    padding: 1rem 0;
+  }
+}
+
 .page-title {
   /* margin: 0 0 0.35rem; */
   color: var(--gold);
@@ -644,9 +650,16 @@ button {
 
 .menu-grid {
   display: grid;
-  gap: 0.2rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.25rem;
+  grid-template-columns: repeat(2, 1fr);
   align-items: stretch;
+}
+
+@media (max-width: 640px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
 }
 
 .menu-card {
@@ -661,7 +674,7 @@ button {
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.429));
 
   /* padding: 1rem; */
-  margin: 1rem 0.8rem;
+  margin: 0.8rem 0.8rem;
 }
 
 @media (max-width: 820px) {

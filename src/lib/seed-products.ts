@@ -35,7 +35,7 @@ export const SEED_PRODUCTS: Product[] = [
     storage: 'Refrigerated/chilled',
     shelfLife: '4-5 days',
     available: true,
-    images: ['/assets/burnt-basque.jpg'],
+    images: ['/assets/burnt-basque/burnt-basque1.jpg', '/assets/burnt-basque/burnt-basque2.jpg', '/assets/burnt-basque/burnt-basque3.jpg', '/assets/burnt-basque/burnt-basque4.jpg'],
   },
   {
     id: 'chocolate-cake',
@@ -50,6 +50,6 @@ export const SEED_PRODUCTS: Product[] = [
     storage: 'Refrigerated',
     shelfLife: '4-5 days',
     available: true,
-    images: ['/assets/choco-cake.jpg'],
+    images: ['/assets/chocolate-cake/chocolate-cake1.jpg', '/assets/chocolate-cake/chocolate-cake2.jpg', '/assets/chocolate-cake/chocolate-cake3.jpg'],
   },
 ];

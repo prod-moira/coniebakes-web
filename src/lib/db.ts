@@ -1,6 +1,6 @@
 import { db, isMockFirebase } from './firebase';
 import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
-import { isStaleProductCache, normalizeProduct, normalizeProducts } from './product-utils';
+import { normalizeProduct } from './product-utils';
 import { Product, SEED_PRODUCTS } from './seed-products';
 
 export type { Product, ProductVariant } from './seed-products';
@@ -48,35 +48,26 @@ export interface Addon {
 
 const MOCK_ADDONS: Addon[] = [
   { id: 'topper-happy-birthday', name: 'Happy Birthday Topper', price: 50, image: '/assets/topper-hb.png', isAddon: true },
-  { id: 'topper-congrats', name: 'Congratulations Topper', price: 60, image: '/assets/topper-congrats.png', isAddon: true },
-  { id: 'topper-anniversary', name: 'Anniversary Topper', price: 55, image: '/assets/topper-anniversary.png', isAddon: true },
   { id: 'candle-blue', name: 'Blue Candle', price: 15, image: '/assets/candle-blue.png', isAddon: true },
   { id: 'candle-pink', name: 'Pink Candle', price: 15, image: '/assets/candle-pink.png', isAddon: true },
-  { id: 'candle-white', name: 'White Candle', price: 15, image: '/assets/candle-white.png', isAddon: true }
+  { id: 'candle-white', name: 'White Candle', price: 15, image: '/assets/candle-white.png', isAddon: true },
 ];
 
-async function syncSeedProductsToFirestore() {
+// Only used when Firestore is completely empty (first-time setup)
+async function seedFirestore() {
   if (!db) return;
   await Promise.all(SEED_PRODUCTS.map((product) => setDoc(doc(db, 'products', product.id), product, { merge: true })));
 }
 
 function getMockProducts(): Product[] {
   if (typeof window === 'undefined') return SEED_PRODUCTS;
-
   const stored = localStorage.getItem('cb_products');
   if (!stored) {
     localStorage.setItem('cb_products', JSON.stringify(SEED_PRODUCTS));
     return SEED_PRODUCTS;
   }
-
   try {
-    const parsed = JSON.parse(stored) as Array<Partial<Product> & { id: string }>;
-    if (isStaleProductCache(parsed as Product[])) {
-      const normalized = normalizeProducts(parsed);
-      localStorage.setItem('cb_products', JSON.stringify(normalized));
-      return normalized.filter((product) => product.available);
-    }
-    return normalizeProducts(parsed).filter((product) => product.available);
+    return JSON.parse(stored) as Product[];
   } catch {
     localStorage.setItem('cb_products', JSON.stringify(SEED_PRODUCTS));
     return SEED_PRODUCTS;
@@ -87,11 +78,9 @@ function getMockData() {
   if (typeof window === 'undefined') {
     return { products: SEED_PRODUCTS, deliveries: {}, orders: [], inquiries: [] };
   }
-
   const deliveries = JSON.parse(localStorage.getItem('cb_deliveries') ?? '{}') as Record<string, number>;
   const orders = JSON.parse(localStorage.getItem('cb_orders') ?? '[]');
   const inquiries = JSON.parse(localStorage.getItem('cb_inquiries') ?? '[]');
-
   return { products: getMockProducts(), deliveries, orders, inquiries };
 }
 
@@ -111,35 +100,19 @@ export async function getProducts(): Promise<Product[]> {
   try {
     const snapshot = await getDocs(query(collection(db, 'products'), where('available', '==', true)));
 
+    // First time setup only — seed Firestore if completely empty
     if (snapshot.empty) {
-      await syncSeedProductsToFirestore();
+      await seedFirestore();
       return SEED_PRODUCTS.filter((product) => product.available);
     }
 
+    // Firestore is the source of truth — just fetch and return
     const products = snapshot.docs
       .map((productDoc) => normalizeProduct({ id: productDoc.id, ...productDoc.data() } as Product))
       .filter((product): product is Product => Boolean(product))
       .filter((product) => product.available);
 
-    const patchJobs = snapshot.docs
-      .map((productDoc) => {
-        const data = productDoc.data();
-        if (data.image && data.description && Array.isArray(data.variants) && data.variants.length > 0) return null;
-        const normalized = normalizeProduct({ id: productDoc.id, ...data } as Product);
-        return normalized ? setDoc(doc(db, 'products', productDoc.id), normalized, { merge: true }) : null;
-      })
-      .filter(Boolean) as Promise<void>[];
-
-    if (patchJobs.length > 0) await Promise.all(patchJobs);
-
-    const existingIds = new Set(products.map((product) => product.id));
-    const missingSeeds = SEED_PRODUCTS.filter((seed) => !existingIds.has(seed.id) && seed.available);
-    if (missingSeeds.length > 0) {
-      await Promise.all(missingSeeds.map((product) => setDoc(doc(db, 'products', product.id), product, { merge: true })));
-      return [...products, ...missingSeeds];
-    }
-
-    return products.length > 0 ? products : SEED_PRODUCTS.filter((product) => product.available);
+    return products;
   } catch (error) {
     console.error('Failed to load products from Firestore. Falling back to seed data.', error);
     return SEED_PRODUCTS.filter((product) => product.available);
@@ -153,7 +126,6 @@ export async function placeOrder(orderData: Omit<Order, 'status'>): Promise<{ su
     saveMockData(data);
     return { success: true, orderId: `mock-${Date.now()}` };
   }
-
   try {
     const orderRef = doc(collection(db, 'orders'));
     await setDoc(orderRef, { ...orderData, status: 'pending', createdAt: Date.now() });
@@ -186,10 +158,7 @@ export async function getAddons(): Promise<Addon[]> {
   }
   try {
     const snapshot = await getDocs(collection(db, 'addons'));
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Addon[];
+    return snapshot.docs.map((addonDoc) => ({ id: addonDoc.id, ...addonDoc.data() })) as Addon[];
   } catch (error) {
     console.error('Failed to load addons from Firestore. Falling back to mock.', error);
     return MOCK_ADDONS;

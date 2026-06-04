@@ -10,8 +10,9 @@ export function resolveProductImages(product: Pick<Product, 'id' | 'images'> | n
 }
 
 export function normalizeProduct(raw: Partial<Product> & { id: string }): Product | null {
-  const seed = SEED_BY_ID[raw.id];
-  if (!seed) return null;
+  if (!raw.id) return null;
+
+  const seed = SEED_BY_ID[raw.id]; // optional fallback, no longer required
 
   // handle legacy single `image` field from old Firestore docs
   const rawImages = (raw as any).image && !raw.images
@@ -19,28 +20,26 @@ export function normalizeProduct(raw: Partial<Product> & { id: string }): Produc
     : raw.images;
 
   return {
-    ...seed,
-    ...raw,
     id: raw.id,
-    name: raw.name?.trim() || seed.name,
-    category: raw.category || seed.category,
-    description: raw.description?.trim() || seed.description,
-    storage: raw.storage?.trim() || seed.storage,
-    shelfLife: raw.shelfLife?.trim() || seed.shelfLife,
-    available: raw.available ?? seed.available,
+    name: raw.name?.trim() || seed?.name || '',
+    category: raw.category || seed?.category || '',
+    description: raw.description?.trim() || seed?.description || '',
+    storage: raw.storage?.trim() || seed?.storage || '',
+    shelfLife: raw.shelfLife?.trim() || seed?.shelfLife || '',
+    available: raw.available ?? seed?.available ?? true,
     images: resolveProductImages({ id: raw.id, images: rawImages ?? [] }),
-    variants: Array.isArray(raw.variants) && raw.variants.length > 0 ? raw.variants : seed.variants,
+    variants: Array.isArray(raw.variants) && raw.variants.length > 0
+      ? raw.variants
+      : seed?.variants ?? [],
   };
 }
 
 export function normalizeProducts(rawProducts: Array<Partial<Product> & { id: string }>): Product[] {
-  return SEED_PRODUCTS.map((seed) => {
-    const existing = rawProducts.find((product) => product.id === seed.id);
-    return normalizeProduct(existing ? { ...existing, id: seed.id } : seed)!;
-  });
+  return rawProducts
+    .map((product) => normalizeProduct(product))
+    .filter((product): product is Product => Boolean(product));
 }
 
 export function isStaleProductCache(products: Product[]): boolean {
-  if (products.length !== SEED_PRODUCTS.length) return true;
   return products.some((product) => !product.images?.length || !product.description || !product.variants?.length);
 }
