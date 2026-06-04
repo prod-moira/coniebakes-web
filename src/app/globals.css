@@ -769,13 +769,19 @@ button {
 
 .modal-panel {
   width: min(680px, 100%);
-  max-height: 80vh;
+  max-height: 90vh;
   overflow: auto;
   background: var(--panel);
   border: 1px solid var(--gold);
   border-radius: 14px;
   padding: 1.25rem;
   scrollbar-width: none; /* Firefox */
+}
+
+@media (max-width: 640px) {
+  .modal-panel {
+    max-height: 80vh;
+  }
 }
 
 .modal-panel::-webkit-scrollbar {
