@@ -36,7 +36,7 @@ export function AddonModal({ addon, onClose }: AddonModalProps) {
           src={addon.image || '/assets/logo.jpg'}
           alt={addon.name}
           className="product-image"
-          style={{ height: '260px', objectFit: 'cover', width: '100%', borderRadius: '10px' }}
+          style={{ height: '290px', objectFit: 'contain', width: '100%', borderRadius: '10px' }}
         />
         <h2 style={{ marginTop: '1rem' }}>{addon.name}</h2>
         
