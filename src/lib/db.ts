@@ -38,6 +38,23 @@ export interface Inquiry {
   message: string;
 }
 
+export interface Addon {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  isAddon: true;
+}
+
+const MOCK_ADDONS: Addon[] = [
+  { id: 'topper-happy-birthday', name: 'Happy Birthday Topper', price: 50, image: '/assets/topper-hb.png', isAddon: true },
+  { id: 'topper-congrats', name: 'Congratulations Topper', price: 60, image: '/assets/topper-congrats.png', isAddon: true },
+  { id: 'topper-anniversary', name: 'Anniversary Topper', price: 55, image: '/assets/topper-anniversary.png', isAddon: true },
+  { id: 'candle-blue', name: 'Blue Candle', price: 15, image: '/assets/candle-blue.png', isAddon: true },
+  { id: 'candle-pink', name: 'Pink Candle', price: 15, image: '/assets/candle-pink.png', isAddon: true },
+  { id: 'candle-white', name: 'White Candle', price: 15, image: '/assets/candle-white.png', isAddon: true }
+];
+
 async function syncSeedProductsToFirestore() {
   if (!db) return;
   await Promise.all(SEED_PRODUCTS.map((product) => setDoc(doc(db, 'products', product.id), product, { merge: true })));
@@ -160,5 +177,21 @@ export async function placeInquiry(inquiryData: Inquiry): Promise<{ success: boo
     return { success: true, inquiryId: ref.id };
   } catch (error: unknown) {
     return { success: false, error: error instanceof Error ? error.message : 'Unable to send inquiry.' };
+  }
+}
+
+export async function getAddons(): Promise<Addon[]> {
+  if (isMockFirebase || !db) {
+    return MOCK_ADDONS;
+  }
+  try {
+    const snapshot = await getDocs(collection(db, 'addons'));
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Addon[];
+  } catch (error) {
+    console.error('Failed to load addons from Firestore. Falling back to mock.', error);
+    return MOCK_ADDONS;
   }
 }

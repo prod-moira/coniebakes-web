@@ -9,6 +9,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   unit: string;
+  isAddon?: boolean;
 }
 
 interface CartContextType {

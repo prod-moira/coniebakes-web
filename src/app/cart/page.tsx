@@ -6,6 +6,8 @@ import { useCart } from '@/context/CartContext';
 export default function CartPage() {
   const { cart, cartTotal, removeFromCart, updateQuantity } = useCart();
 
+  const hasOnlyAddons = cart.length > 0 && cart.every((item) => item.isAddon);
+
   if (cart.length === 0) {
     return (
       <section className="container page-section">
@@ -30,7 +32,9 @@ export default function CartPage() {
           <article key={`${item.productId}-${item.variantLabel}`} className="cart-line">
             <div>
               <strong>{item.productName}</strong>
-              <p style={{ margin: '0.2rem 0 0', opacity: 0.9 }}>{item.variantLabel}</p>
+              {!item.isAddon && (
+                <p style={{ margin: '0.2rem 0 0', opacity: 0.9 }}>{item.variantLabel}</p>
+              )}
             </div>
             <div className="cart-actions">
               <div className="qty-controls">
@@ -50,14 +54,26 @@ export default function CartPage() {
           </article>
         ))}
 
+        {hasOnlyAddons && (
+          <div className="alert-error" style={{ marginBottom: '1.25rem', textAlign: 'center' }}>
+            Please add a product before checking out
+          </div>
+        )}
+
         <div className="cart-footer-bar">
           <div className="cart-total-group">
             <span className="cart-total-label">Total</span>
             <span className="cart-total-amount">₱{cartTotal.toLocaleString()}</span>
           </div>
-          <Link href="/checkout" className="btn-action">
-            Proceed to Checkout
-          </Link>
+          {hasOnlyAddons ? (
+            <button type="button" disabled className="btn-action">
+              Proceed to Checkout
+            </button>
+          ) : (
+            <Link href="/checkout" className="btn-action">
+              Proceed to Checkout
+            </Link>
+          )}
         </div>
       </div>
     </section>

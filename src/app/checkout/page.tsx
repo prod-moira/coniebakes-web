@@ -77,11 +77,13 @@ export default function CheckoutPage() {
 
   const maxOffset = MAX_DAYS - MIN_DAYS - WINDOW_SIZE + 1;
 
+  const hasOnlyAddons = useMemo(() => cart.length > 0 && cart.every((item) => item.isAddon), [cart]);
+
   useEffect(() => {
-    if (!cart.length && !orderPlaced) {
+    if ((!cart.length || hasOnlyAddons) && !orderPlaced) {
       router.replace('/cart');
     }
-  }, [cart, orderPlaced]);
+  }, [cart, hasOnlyAddons, orderPlaced, router]);
 
   const submit = async (data: CheckoutFormData) => {
     const result = await placeOrder({
@@ -139,7 +141,7 @@ export default function CheckoutPage() {
               className={`summary-line${index === cart.length - 1 ? ' summary-line--last' : ''}`}
             >
               <span>
-                {item.productName} — {item.variantLabel} x{item.quantity}
+                {item.productName}{!item.isAddon && ` — ${item.variantLabel}`} x{item.quantity}
               </span>
               <strong>₱{(item.price * item.quantity).toLocaleString()}</strong>
             </div>
