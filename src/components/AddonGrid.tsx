@@ -14,7 +14,7 @@ export function AddonGrid({ addons, onSelectAddon }: AddonGridProps) {
     <div className="page-section">
       <h3 className="page-title">Extras & Add-ons</h3>
       <p className="page-subtitle">
-        Complete your order with these special additions. Click on any item to customize and add to your cart.
+        Complete your order with these additions!
       </p>
       
       <div className="addon-menu-grid">
