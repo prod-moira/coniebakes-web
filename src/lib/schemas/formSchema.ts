@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const facebookUrlRegex = /^https?:\/\/(www\.)?facebook\.com\/[A-Za-z0-9.\-_]+\/?$/;
+const facebookUrlRegex = /^https?:\/\/(www\.)?facebook\.com\/[A-Za-z0-9.\-_/]+(\?[^\s]*)?$/;
 
 export const checkoutSchema = z.object({
   name: z
