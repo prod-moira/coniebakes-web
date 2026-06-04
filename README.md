@@ -17,7 +17,6 @@ A full-stack ordering system for **Conie Bakes** (@coniebakes), a home bakery ba
 - **Firebase Firestore** — cloud database for products and orders
 - **Resend** — transactional email notifications
 - **Vercel** — deployment
-- **Tailwind CSS** — styling
 
 ## Getting Started
 
