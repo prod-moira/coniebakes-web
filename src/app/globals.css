@@ -781,7 +781,7 @@ button {
   max-height: 90vh;
   overflow: auto;
   background: var(--panel);
-  border: 1px solid var(--gold);
+  border: 1px solid #c9a84c66;
   border-radius: 14px;
   padding: 1.25rem;
   scrollbar-width: none; /* Firefox */
