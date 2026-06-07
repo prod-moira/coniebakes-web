@@ -370,6 +370,20 @@ button {
   }
 }
 
+@media (max-width: 640px) {
+  .checkout-layout {
+    gap: 0.5rem;
+  }
+
+  .checkout-summary, .checkout-form {
+    margin: 0.5rem 1rem;
+  }
+
+  .checkout-summary {
+    margin-top: 1rem;
+  }
+}
+
 .checkout-summary h2,
 .checkout-form h2,
 .cart-panel h2,
