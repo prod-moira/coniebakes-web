@@ -421,6 +421,7 @@ button {
   border: 1px solid #c9a84c33;
   border-radius: 12px;
   padding: 1.25rem;
+  height: 400px;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
