@@ -125,7 +125,7 @@ a {
 
 .site-footer {
   border-top: 1px solid #c9a84c55;
-  margin-top: 2rem;
+  margin-top: 0;
   padding: 1.5rem 0 2rem;
   /* background: var(--dark-red-deep); */
   background-color: rgb(39, 1, 1);
@@ -276,8 +276,8 @@ button {
   }
   .bestseller-image,
   .about-image {
-    width: 100vh;
-    height: 90vw;
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -310,10 +310,27 @@ button {
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  .home-section-content {
+    padding: 0.75rem;
+  }
+}
+
 .home-section-subtitle {
   margin-top: 0;
 }
 
+.bestseller-image, .about-image {
+  object-fit: cover;
+  background: var(--dark-red-deep);
+  border: 1px solid #c9a84c66;
+  border-radius: 12px;
+  width: 100%;
+  min-height: 150px;
+  max-height: 450px;
+}
+
+/* AFTER base styles */
 @media (min-width: 860px) {
   .bestseller-grid,
   .about-grid {
@@ -325,8 +342,12 @@ button {
   .about-text {
     text-align: left;
   }
-}
 
+  .bestseller-image, .about-image {
+    max-height: 450px; /* or whatever you need */
+  }
+
+}
 @media (max-width: 859px) {
   .bestseller-section,
   .about-section {
@@ -336,7 +357,8 @@ button {
   .bestseller-image,
   .about-image {
     margin: 0 auto;
-    max-width: 320px;
+    max-width: 85vw;
+    max-height: 300px;
     background: none;
     border: none;
   }
@@ -348,15 +370,108 @@ button {
   font-size: 2rem;
 }
 
-.bestseller-image,
-.about-image {
-  width: 100%;
-  border-radius: 12px;
-  border: 1px solid #c9a84c66;
-  object-fit: cover;
-  min-height: 250px;
-  max-height: 450px;
+.bestseller-section,
+.feedback-section {
+  min-height: calc(100vh - 40px);
+  display: flex;
+  align-items: center;
+}
+
+.about-section {
+  min-height: 76vh;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .bestseller-section,
+  .feedback-section {
+    min-height: calc(100svh - 40px);
+  }
+
+  .about-section {
+    min-height: 76vh;
+    margin-top: 2rem;
+  }
+}
+
+/* Feedback Section */
+
+.feedback-section {
+  padding: 3rem 0;
   background: var(--dark-red-deep);
+  touch-action: auto;
+  pointer-events: auto;
+}
+
+.feedback-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 768px) {
+  .feedback-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feedback-card {
+  background: var(--panel);
+  border: 1px solid #c9a84c33;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.feedback-quote {
+  margin: 0;
+  font-style: italic;
+  line-height: 1.6;
+  opacity: 0.92;
+  font-size: 0.95rem;
+  padding: 0 1rem;
+}
+
+.feedback-avatar {
+  display: flex;
+  justify-content: center;
+  color: var(--gold);
+  opacity: 0.75;
+}
+
+.feedback-divider {
+  border: none;
+  border-top: 1px solid #c9a84c33;
+  margin: 0.5rem 0;
+}
+
+.feedback-author {
+  margin: 0;
+  color: var(--gold);
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: none;
+}
+
+.feedback-author-description {
+  margin: 0;
+  margin-top: -0.5rem;
+  color: var(--gold);
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.feedback-quote {
+  margin: 0;
+  font-style: italic;
+  line-height: 1.6;
+  opacity: 0.92;
+  text-align: center;
 }
 
 .checkout-layout {
@@ -791,6 +906,11 @@ button {
   z-index: 50;
 }
 
+.modal-overlay:has(.modal-panel:focus-within),
+.modal-overlay.open {
+  pointer-events: auto;  /* Enable touches only when modal is active */
+}
+
 .modal-panel {
   width: min(680px, 100%);
   max-height: 90vh;
@@ -1148,4 +1268,56 @@ button {
     border-bottom: none;
     border-right: 1px solid #c9a84c22;
   }
+}
+
+/* Testimonial Carousel */
+.testimonial-desktop {
+  display: none;
+}
+
+.testimonial-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+}
+
+@media (min-width: 768px) {
+  .testimonial-desktop {
+    display: grid;
+  }
+
+  .testimonial-mobile {
+    display: none;
+  }
+}
+
+.testimonial-desktop-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.testimonial-desktop-controls .carousel-arrow {
+  position: static;
+  transform: none;
+  flex-shrink: 0;
+}
+
+.testimonial-desktop-controls .feedback-grid {
+  flex: 1;
+}
+
+.testimonial-desktop .carousel-dots {
+  margin-top: 1.5rem;
+}
+
+.testimonial-desktop .carousel-dot {
+  width: 0.6rem;
+  height: 0.6rem;
 }

@@ -1,13 +1,15 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export function OrderPlacedModal() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (sessionStorage.getItem('orderPlaced') === '1') {
       sessionStorage.removeItem('orderPlaced');
       setOpen(true);
@@ -19,10 +21,11 @@ export function OrderPlacedModal() {
     router.replace('/');
   };
 
-  if (!open) return null;
+  // Only render after hydration to prevent mismatch
+  if (!mounted || !open) return null;
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" style={{ pointerEvents: 'auto' }}>
       <div className="modal-panel">
         <h2 className="modal-title">Your order has been placed! </h2>
         <p className="modal-message">

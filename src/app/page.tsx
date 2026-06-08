@@ -1,6 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { OrderPlacedModal } from '@/components/OrderPlacedModal';
+import { TestimonialCarousel } from '@/components/TestimonialCarousel';
+
 
 export default function HomePage() {
   return (
@@ -24,7 +28,6 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
-
       <section className="bestseller-section">
         <div className="container home-stack bestseller-stack">
           <div className="home-section-content">
@@ -43,18 +46,22 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="feedback-section">
+        <div className="container">
+          <h2 className="section-heading" style={{ textAlign: 'center' }}>Hear From Our Customers</h2>
+          <p className="home-section-subtitle" style={{ textAlign: 'center', marginBottom: '2rem' }}>Baked fresh, loved by many.</p>
+              <TestimonialCarousel />
+        </div>
+      </section>
+
       <section className="about-section">
         <div className="container home-stack about-stack">
           <div className="home-section-content about-text">
             <h2 className="section-heading">About Us</h2>
             <p>
-              Conie Bakes started baking as a hobby during the pandemic and was founded in 2020. Our baker is a lovely
+              Conie Bakes started baking as a hobby during the pandemic and was founded in 2020. Every delicacy is made in small batches with care and patience. Our baker is a lovely
               mom of 4 who bakes from the heart — turning everyday moments into something warm, sweet, and memorable.
             </p>
-            {/* <p>
-              Every cake and cookie is still made in small batches with care, patience, and love. From our signature burnt
-              basque cheesecakes to our chewy cookies, we bake to bring comfort to your table.
-            </p> */}
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/about-us.jpg" alt="About Conie Bakes" className="about-image" />
