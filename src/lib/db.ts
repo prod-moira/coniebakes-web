@@ -18,7 +18,7 @@ export interface OrderItem {
 export interface Order {
   customerName: string;
   phoneNumber: string;
-  facebookLink: string;
+  socialUrl: string;
   email: string | null;
   address: string;
   payment: string;

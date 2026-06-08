@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const facebookUrlRegex = /^https?:\/\/(www\.)?facebook\.com\/[A-Za-z0-9.\-_/]+(\?[^\s]*)?$/;
+const socialUrlRegex = /^https?:\/\/(www\.)?(facebook\.com|instagram\.com)\/[A-Za-z0-9.\-_/]+(\?[^\s]*)?$/;
 
 export const checkoutSchema = z.object({
   name: z
@@ -19,10 +19,10 @@ email: z
     .string()
     .regex(/^09[0-9]{9}$/, "Please input a valid phone number."),
 
-  facebook: z
+  socialUrl: z
     .string()
-    .max(100, "Please input a valid Facebook URL")
-    .regex(facebookUrlRegex, "Please input a valid Facebook URL"),
+    .max(150, "Please input a valid Facebook or Instagram URL")
+    .regex(socialUrlRegex, "Please input a valid Facebook or Instagram URL"),
 
   address: z
     .string()

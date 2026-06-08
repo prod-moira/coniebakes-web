@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const {
       customerName,
       phoneNumber,
-      facebookLink,
+      socialUrl,
       email,
       address,
       payment,
@@ -32,7 +32,7 @@ const emailContent = `
     <table style="width: 100%; border-collapse: collapse;">
       <tr><td style="padding: 6px 0; color: #666; width: 120px;"><strong>Name</strong></td><td>${customerName}</td></tr>
       <tr><td style="padding: 6px 0; color: #666;"><strong>Phone</strong></td><td>${phoneNumber}</td></tr>
-      <tr><td style="padding: 6px 0; color: #666;"><strong>Facebook</strong></td><td>${facebookLink}</td></tr>
+      <tr><td style="padding: 6px 0; color: #666;"><strong>Social Media</strong></td><td>${socialUrl}</td></tr>
       <tr><td style="padding: 6px 0; color: #666;"><strong>Email</strong></td><td>${email || 'Not provided'}</td></tr>
       <tr><td style="padding: 6px 0; color: #666;"><strong>Mode of Payment</strong></td><td>${payment}</td></tr>
     </table>

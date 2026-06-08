@@ -43,7 +43,7 @@ export default function CheckoutPage() {
       name: '',
       email: '',
       phone: '',
-      facebook: '',
+      socialUrl: '',
       address: '',
       payment: '',
       deliveryDate: '',
@@ -89,7 +89,7 @@ export default function CheckoutPage() {
     const result = await placeOrder({
       customerName: data.name.trim(),
       phoneNumber: data.phone.trim(),
-      facebookLink: data.facebook.trim(),
+      socialUrl: data.socialUrl.trim(),
       email: data.email.trim() || null,
       address: data.address.trim(),
       payment: data.payment.trim(),
@@ -108,7 +108,7 @@ export default function CheckoutPage() {
       body: JSON.stringify({
         customerName: data.name,
         phoneNumber: data.phone,
-        facebookLink: data.facebook,
+        socialUrl: data.socialUrl,
         email: data.email,
         address: data.address,
         payment: data.payment,
@@ -168,14 +168,14 @@ export default function CheckoutPage() {
             {errors.email && <p className="error">{errors.email.message}</p>}
           </div>
 
-          <div className={errors.facebook ? 'form-field-error' : 'form-field'}>
-            <label htmlFor="facebook">Facebook profile link *</label>
+          <div className={errors.socialUrl ? 'form-field-error' : 'form-field'}>
+            <label htmlFor="socialUrl">Facebook or Instagram profile link *</label>
             <input
-              id="facebook"
+              id="socialUrl"
               type="url"
-              {...register('facebook')}
+              {...register('socialUrl')}
             />
-            {errors.facebook && <p className="error">{errors.facebook.message}</p>}
+            {errors.socialUrl && <p className="error">{errors.socialUrl.message}</p>}
           </div>
 
           <div className={errors.phone ? 'form-field-error' : 'form-field'}>
