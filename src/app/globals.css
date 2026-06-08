@@ -151,12 +151,13 @@ a {
 
 .footer-item a,
 .footer-row a.footer-item {
-  color: var(--gold);
+  color: var(--text);
 }
 
 .footer-item a:hover,
 .footer-row a.footer-item:hover {
   text-decoration: underline;
+  color: var(--gold);
 }
 
 .footer-icon {
@@ -170,7 +171,7 @@ a {
 @media (min-width: 900px) {
   .footer-row {
     display: grid;
-    grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(0, auto));
+    grid-template-columns: minmax(220px, 1.5fr) repeat(4, minmax(0, auto));
     align-items: center;
     gap: 1rem 2rem;
   }
