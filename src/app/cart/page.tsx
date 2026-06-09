@@ -2,9 +2,32 @@
 
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { useState, useEffect } from 'react';
 
 export default function CartPage() {
   const { cart, cartTotal, removeFromCart, updateQuantity } = useCart();
+  const [cooldownRemaining, setCooldownRemaining] = useState(0);
+
+useEffect(() => {
+  const check = () => {
+    const last = sessionStorage.getItem('cb_last_order');
+    if (!last) { setCooldownRemaining(0); return; }
+    const elapsed = Date.now() - parseInt(last);
+    const remaining = 15 * 60 * 1000 - elapsed;
+    setCooldownRemaining(remaining > 0 ? Math.ceil(remaining / 1000) : 0);
+  };
+
+  check();
+  const interval = setInterval(check, 1000);
+  return () => clearInterval(interval);
+}, []);
+
+  const formatCooldown = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
 
   const hasOnlyAddons = cart.length > 0 && cart.every((item) => item.isAddon);
 
@@ -54,28 +77,37 @@ export default function CartPage() {
           </article>
         ))}
 
-        {hasOnlyAddons && (
-          <div className="alert-error" style={{ marginBottom: '1.25rem', textAlign: 'center' }}>
-            Please add a product before checking out
-          </div>
-        )}
-
         <div className="cart-footer-bar">
           <div className="cart-total-group">
             <span className="cart-total-label">Total</span>
             <span className="cart-total-amount">₱{cartTotal.toLocaleString()}</span>
           </div>
-          {hasOnlyAddons ? (
-            <button type="button" disabled className="btn-action">
-              Proceed to Checkout
-            </button>
-          ) : (
-            <Link href="/checkout" className="btn-action">
-              Proceed to Checkout
-            </Link>
-          )}
+        {hasOnlyAddons || cooldownRemaining > 0 ? (
+          <button type="button" disabled className="btn-action">
+            Proceed to Checkout
+          </button>
+        ) : (
+          <Link href="/checkout" className="btn-action">
+            Proceed to Checkout
+          </Link>
+        )}
         </div>
       </div>
+
+    <div style={{ margin: '0 1rem' }}>
+      {hasOnlyAddons && (
+        <div className="alert-error" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+          Please add a product before checking out
+        </div>
+      )}
+
+      {cooldownRemaining > 0 && (
+        <div className="alert-error" style={{ textAlign: 'center', marginTop: '0.5rem'}}>
+          You recently placed an order. Please wait {formatCooldown(cooldownRemaining)} before ordering again.
+        </div>
+      )}
+    </div>
+
     </section>
   );
 }

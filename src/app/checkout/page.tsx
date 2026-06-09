@@ -103,7 +103,13 @@ export default function CheckoutPage() {
       specialInstructions: data.specialInstructions?.trim() || null,
     });
 
-    if (!result.success) return;
+    if (!result.success) {
+    if (result.error === 'RATE_LIMITED') {
+      sessionStorage.setItem('cb_last_order', Date.now().toString());
+      router.replace('/cart');
+    }
+    return;
+  }
 
     await fetch('/api/order', {
       method: 'POST',
@@ -126,7 +132,9 @@ export default function CheckoutPage() {
     setOrderPlaced(true);
     clearCart();
     sessionStorage.setItem('orderPlaced', '1');
+    sessionStorage.setItem('cb_last_order', Date.now().toString());
     router.replace('/');
+
   };
 
   return (

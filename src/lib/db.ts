@@ -148,6 +148,19 @@ export async function placeOrder(orderData: Omit<Order, 'status'>): Promise<{ su
     return { success: true, orderId: `mock-${Date.now()}` };
   }
   try {
+    // Rate limit check — 1 order per phone number per 15 mins
+    const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
+    const recentOrderSnap = await getDocs(
+      query(
+        collection(db, 'orders'),
+        where('phoneNumber', '==', orderData.phoneNumber),
+        where('createdAt', '>', fifteenMinsAgo)
+      )
+    );
+    if (!recentOrderSnap.empty) {
+      return { success: false, error: 'RATE_LIMITED' };
+    }
+
     const orderRef = doc(collection(db, 'orders'));
     await setDoc(orderRef, { ...orderData, status: 'pending', createdAt: Date.now() });
     return { success: true, orderId: orderRef.id };
@@ -214,12 +227,6 @@ export async function getBlockedDatesConfig(): Promise<BlockedDatesConfig> {
     const blockedDays: number[] = configDoc?.blockedDays ?? [];
     const blockedDates : string[] = configDoc?.blockedDates ?? [];
     const overrideDates: string[] = configDoc?.overrideDates ?? [];
-
-    // const blockedDates = new Set(
-    //   datesSnap.docs
-    //     .filter((d) => d.id !== 'config')
-    //     .map((d) => d.id)
-    // );
 
     return {
       blockedDays,
