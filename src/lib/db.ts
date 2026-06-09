@@ -3,6 +3,27 @@ import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firesto
 import { normalizeProduct } from './product-utils';
 import { Product, SEED_PRODUCTS } from './seed-products';
 
+/**
+ * Normalize a date to YYYY-MM-DD format using the user's local timezone.
+ * This ensures consistent date comparisons across the entire application.
+ * @param date - A Date object or YYYY-MM-DD string
+ * @returns A YYYY-MM-DD formatted string in the user's local timezone
+ */
+export function normalizeDate(date: Date | string): string {
+  if (typeof date === 'string') {
+    // If already a string, validate it's in YYYY-MM-DD format
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return date;
+    }
+    // Otherwise, parse it as a date
+    date = new Date(date);
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export type { Product, ProductVariant } from './seed-products';
 export { SEED_PRODUCTS };
 
@@ -166,31 +187,51 @@ export async function getAddons(): Promise<Addon[]> {
 }
 
 export interface BlockedDatesConfig {
-  blockedDays: number[]; // 0=Sun, 1=Mon, etc.
-  blockedDates: Set<string>; // one-off ISO dates
+  blockedDays: number[];
+  blockedDates: Set<string>;
+  overrideDates: Set<string>;
 }
 
 export async function getBlockedDatesConfig(): Promise<BlockedDatesConfig> {
   if (isMockFirebase || !db) {
-    return { blockedDays: [], blockedDates: new Set() };
+    return {
+      blockedDays: [],
+      blockedDates: new Set(),
+      overrideDates: new Set(),
+    };
   }
+
   try {
     const [configSnap, datesSnap] = await Promise.all([
-      getDocs(query(collection(db, 'blockedDates'), where('__name__', '==', 'config'))),
+      getDocs(
+        query(collection(db, 'blockedDates'), where('__name__', '==', 'config'))
+      ),
       getDocs(collection(db, 'blockedDates')),
     ]);
 
     const configDoc = configSnap.docs[0]?.data();
-    const blockedDays: number[] = configDoc?.blockedDays ?? [];
-    const blockedDates = new Set(
-      datesSnap.docs
-        .filter((d) => d.id !== 'config')
-        .map((d) => d.id)
-    );
 
-    return { blockedDays, blockedDates };
+    const blockedDays: number[] = configDoc?.blockedDays ?? [];
+    const blockedDates : string[] = configDoc?.blockedDates ?? [];
+    const overrideDates: string[] = configDoc?.overrideDates ?? [];
+
+    // const blockedDates = new Set(
+    //   datesSnap.docs
+    //     .filter((d) => d.id !== 'config')
+    //     .map((d) => d.id)
+    // );
+
+    return {
+      blockedDays,
+      blockedDates: new Set (blockedDates),
+      overrideDates: new Set(overrideDates),
+    };
   } catch (error) {
     console.error('Failed to load blocked dates config.', error);
-    return { blockedDays: [], blockedDates: new Set() };
+    return {
+      blockedDays: [],
+      blockedDates: new Set(),
+      overrideDates: new Set(),
+    };
   }
 }

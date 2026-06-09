@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { sanitizePhoneInput } from '@/lib/phone';
-import { placeOrder, getBlockedDatesConfig, type BlockedDatesConfig } from '@/lib/db';
+import { placeOrder, getBlockedDatesConfig, type BlockedDatesConfig, normalizeDate } from '@/lib/db';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,13 +13,6 @@ import { checkoutSchema, CheckoutFormData } from '@/lib/schemas/formSchema';
 const MIN_DAYS = 3;
 const MAX_DAYS = 30;
 const WINDOW_SIZE = 7;
-
-function formatLocalDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
 
 function formatDateLabel(date: Date) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
@@ -30,7 +23,12 @@ export default function CheckoutPage() {
   const { cart, cartTotal, clearCart } = useCart();
   const [offset, setOffset] = useState(0);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [blockedConfig, setBlockedConfig] = useState<BlockedDatesConfig>({ blockedDays: [], blockedDates: new Set() });
+  const [blockedConfig, setBlockedConfig] =
+    useState<BlockedDatesConfig>({
+      blockedDays: [],
+      blockedDates: new Set(),
+      overrideDates: new Set(),
+    });
 
   const {
     register,
@@ -251,27 +249,28 @@ export default function CheckoutPage() {
             </div>
             <div className="date-grid">
             {dateList.map((date) => {
-              const iso = formatLocalDate(date);
-              // const isBlocked = blockedConfig.blockedDates.has(iso) || blockedConfig.blockedDays.includes(new Date(iso).getDay());
-
+              const normalizedDate = normalizeDate(date);
               const dayOfWeek = date.getDay();
+              const isForcedOpen =
+                blockedConfig.overrideDates.has(normalizedDate);
+              const isHardBlocked =
+                blockedConfig.blockedDates.has(normalizedDate);
               const isRecurringBlocked =
                 blockedConfig.blockedDays.includes(dayOfWeek);
-              const isSpecificBlocked =
-                blockedConfig.blockedDates.has(iso);
-              // Hide recurring blocked weekdays completely
-              if (isRecurringBlocked) {
+              if (isRecurringBlocked && !isForcedOpen) {
                 return null;
               }
+              const isBlocked =
+                !isForcedOpen && isHardBlocked;
 
             return (
               <button
-                key={iso}
+                key={normalizedDate}
                 type="button"
-                className={`date-btn ${selectedDate === iso ? 'selected' : ''}`}
-                disabled={isSpecificBlocked}
+                className={`date-btn ${selectedDate === normalizedDate ? 'selected' : ''}`}
+                disabled={isBlocked}
                 onClick={() =>
-                  setValue('deliveryDate', iso, { shouldValidate: true })
+                  setValue('deliveryDate', normalizedDate, { shouldValidate: true })
                 }
               >
                 <span>{formatDateLabel(date)}</span>
