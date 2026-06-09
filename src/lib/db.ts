@@ -164,3 +164,33 @@ export async function getAddons(): Promise<Addon[]> {
     return MOCK_ADDONS;
   }
 }
+
+export interface BlockedDatesConfig {
+  blockedDays: number[]; // 0=Sun, 1=Mon, etc.
+  blockedDates: Set<string>; // one-off ISO dates
+}
+
+export async function getBlockedDatesConfig(): Promise<BlockedDatesConfig> {
+  if (isMockFirebase || !db) {
+    return { blockedDays: [], blockedDates: new Set() };
+  }
+  try {
+    const [configSnap, datesSnap] = await Promise.all([
+      getDocs(query(collection(db, 'blockedDates'), where('__name__', '==', 'config'))),
+      getDocs(collection(db, 'blockedDates')),
+    ]);
+
+    const configDoc = configSnap.docs[0]?.data();
+    const blockedDays: number[] = configDoc?.blockedDays ?? [];
+    const blockedDates = new Set(
+      datesSnap.docs
+        .filter((d) => d.id !== 'config')
+        .map((d) => d.id)
+    );
+
+    return { blockedDays, blockedDates };
+  } catch (error) {
+    console.error('Failed to load blocked dates config.', error);
+    return { blockedDays: [], blockedDates: new Set() };
+  }
+}
