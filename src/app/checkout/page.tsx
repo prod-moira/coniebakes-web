@@ -316,13 +316,13 @@ export default function CheckoutPage() {
 
           <p className="note-box" style={{ margin: '0 0 0.1rem 0', backgroundColor: 'var(--dark-red)' }}>
             After placing your order, the admin will reach out to you via your provided{' '}
-            <span>Facebook</span> or <span>mobile number</span> to confirm your order and arrange payment.
+            <span>Facebook/Instagram</span> or <span>mobile number</span> to confirm your order and arrange payment.
           </p>
 
           <label className="checkbox-field">
             <input type="checkbox" {...register('agree')} />
             <span>
-              I agree to be contacted via <b>Facebook</b> or <b>mobile number</b> for order confirmation.
+              I agree to be contacted via <b>Facebook/Instagram</b> or <b>mobile number</b> for order confirmation.
             </span>
           </label>
           {errors.agree && <p className="error">{errors.agree.message}</p>}

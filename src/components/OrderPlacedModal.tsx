@@ -29,7 +29,7 @@ export function OrderPlacedModal() {
       <div className="modal-panel">
         <h2 className="modal-title">Your order has been placed! </h2>
         <p className="modal-message">
-          Please wait for the admin to contact you via Facebook or your mobile number to
+          Please wait for the admin to contact you via Facebook/Instagram or your mobile number to
           confirm your order and arrange payment.
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '0.8rem' }}>
