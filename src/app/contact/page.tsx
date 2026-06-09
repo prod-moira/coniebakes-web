@@ -9,6 +9,7 @@ import { placeInquiry } from '@/lib/db';
 
 export default function ContactPage() {
   const [status, setStatus] = useState('');
+  const [rateLimited, setRateLimited] = useState(false);
 
   const {
     register,
@@ -41,7 +42,12 @@ export default function ContactPage() {
     });
 
     if (!result.success) {
-      setStatus('Unable to send your message.');
+      if (result.error === 'RATE_LIMITED') {
+        setStatus('You recently sent a message. Please wait for a few minutes before sending again.');
+        setRateLimited(true);
+      } else {
+        setStatus('Unable to send your message.');
+      }
       return;
     }
 
@@ -133,20 +139,22 @@ export default function ContactPage() {
         <button
           type="submit"
           className="btn-action"
-          disabled={isSubmitting || !inquiryType || Object.keys(errors).length > 0}
-          >
-            {isSubmitting ? 'Sending...' : 'Submit'}
-          </button>
+          disabled={isSubmitting || !inquiryType || Object.keys(errors).length > 0 || rateLimited}
+        >
+          {isSubmitting ? 'Sending...' : 'Submit'}
+        </button>
         </form>
 
-        {status && (
-          <p
-            className={status.includes('successfully') ? 'alert-success' : 'alert-error'}
-            style={{ marginTop: '0.9rem' }}
-          >
-            {status}
-          </p>
-        )}
+      {status && (
+        <p
+          className={status === 'Message sent successfully.' ? 'alert-success' : 'alert-error'}
+          style={{ marginTop: '0.9rem', textAlign: "center" }}
+        >
+          {status === 'RATE_LIMITED'
+            ? 'You recently sent a message. Please wait for a few minutes before sending again.'
+            : status}
+        </p>
+      )}
       </div>
     </section>
   );
