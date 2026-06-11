@@ -20,16 +20,38 @@ export async function POST(request: Request) {
     } = body;
 
     // Rate limit check — server-side via Admin SDK
-    const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
-    const recentOrders = await adminDb
-      .collection('orders')
-      .where('phoneNumber', '==', phoneNumber)
-      .where('createdAt', '>', fifteenMinsAgo)
-      .get();
+    try {
+      const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
+      const recentOrders = await adminDb
+        .collection('orders')
+        .where('phoneNumber', '==', phoneNumber)
+        .where('createdAt', '>', fifteenMinsAgo)
+        .get();
 
-    if (!recentOrders.empty) {
-      return NextResponse.json({ success: false, error: 'RATE_LIMITED' }, { status: 429 });
+      if (!recentOrders.empty) {
+        return NextResponse.json({ success: false, error: 'RATE_LIMITED' }, { status: 429 });
+      }
+    } catch (rateLimitError) {
+      console.error('⚠️ Rate limit check failed, proceeding anyway:', rateLimitError);
+      // Don't block the order if rate limit check fails
     }
+
+    // After rate limit check passes, write to Firestore
+  await adminDb.collection('orders').add({
+    customerName,
+    phoneNumber,
+    socialUrl,
+    email: email || null,
+    address,
+    payment,
+    deliveryDate,
+    deliveryTime: deliveryTime || null,
+    items,
+    total,
+    specialInstructions: specialInstructions || null,
+    status: 'pending',
+    createdAt: Date.now(),
+  });
 
 
 const emailContent = `
@@ -107,7 +129,7 @@ const emailContent = `
     const data = await resend.emails.send({
       from: 'Conie Bakes <onboarding@resend.dev>',
       to: process.env.RESEND_TO_EMAIL ?? 'moirachelseyburbos@gmail.com',
-      subject: `New Order Request from ${customerName}`,
+      subject: `New Order from ${customerName}`,
       html: emailContent,
     });
 

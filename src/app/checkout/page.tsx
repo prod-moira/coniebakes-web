@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { sanitizePhoneInput } from '@/lib/phone';
+import { isMockFirebase } from '@/lib/firebase';
 import { placeOrder, getBlockedDatesConfig, type BlockedDatesConfig, normalizeDate } from '@/lib/db';
 
 import { useForm } from 'react-hook-form';
@@ -88,8 +89,38 @@ export default function CheckoutPage() {
     getBlockedDatesConfig().then(setBlockedConfig);
   }, []);
 
-  const submit = async (data: CheckoutFormData) => {
-    const result = await placeOrder({
+ const submit = async (data: CheckoutFormData) => {
+  const res = await fetch('/api/order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      customerName: data.name.trim(),
+      phoneNumber: data.phone.trim(),
+      socialUrl: data.socialUrl.trim(),
+      email: data.email.trim() || null,
+      address: data.address.trim(),
+      payment: data.payment.trim(),
+      deliveryDate: data.deliveryDate,
+      deliveryTime: data.deliveryTime || null,
+      specialInstructions: data.specialInstructions?.trim() || null,
+      items: cart,
+      total: cartTotal,
+    }),
+  });
+
+  const result = await res.json();
+
+  if (!result.success) {
+    if (result.error === 'RATE_LIMITED') {
+      sessionStorage.setItem('cb_last_order', Date.now().toString());
+      router.replace('/cart');
+    }
+    return;
+  }
+
+  // Mock mode — placeOrder handles Firestore write locally
+  if (isMockFirebase) {
+    await placeOrder({
       customerName: data.name.trim(),
       phoneNumber: data.phone.trim(),
       socialUrl: data.socialUrl.trim(),
@@ -102,40 +133,14 @@ export default function CheckoutPage() {
       total: cartTotal,
       specialInstructions: data.specialInstructions?.trim() || null,
     });
-
-    if (!result.success) {
-    if (result.error === 'RATE_LIMITED') {
-      sessionStorage.setItem('cb_last_order', Date.now().toString());
-      router.replace('/cart');
-    }
-    return;
   }
 
-    await fetch('/api/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        customerName: data.name,
-        phoneNumber: data.phone,
-        socialUrl: data.socialUrl,
-        email: data.email,
-        address: data.address,
-        payment: data.payment,
-        deliveryDate: data.deliveryDate,
-        deliveryTime: data.deliveryTime,
-        specialInstructions: data.specialInstructions,
-        items: cart,
-        total: cartTotal,
-      }),
-    });
-
-    setOrderPlaced(true);
-    clearCart();
-    sessionStorage.setItem('orderPlaced', '1');
-    sessionStorage.setItem('cb_last_order', Date.now().toString());
-    router.replace('/');
-
-  };
+  setOrderPlaced(true);
+  clearCart();
+  sessionStorage.setItem('orderPlaced', '1');
+  sessionStorage.setItem('cb_last_order', Date.now().toString());
+  router.replace('/');
+};
 
   return (
     <section className="container page-section">

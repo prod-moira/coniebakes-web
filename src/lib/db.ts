@@ -57,6 +57,7 @@ export interface Inquiry {
   phone: string | null;
   inquiryType: 'Concern' | 'Special Order Request' | 'Feedback' | 'Other';
   message: string;
+  feedbackConsent?: boolean
 }
 
 export interface Addon {
@@ -147,13 +148,8 @@ export async function placeOrder(orderData: Omit<Order, 'status'>): Promise<{ su
     saveMockData(data);
     return { success: true, orderId: `mock-${Date.now()}` };
   }
-  try {
-    const orderRef = doc(collection(db, 'orders'));
-    await setDoc(orderRef, { ...orderData, status: 'pending', createdAt: Date.now() });
-    return { success: true, orderId: orderRef.id };
-  } catch (error: unknown) {
-    return { success: false, error: error instanceof Error ? error.message : 'Unable to place order.' };
-  }
+  // Real mode — handled by /api/order
+  return { success: true };
 }
 
 export async function placeInquiry(inquiryData: Inquiry): Promise<{ success: boolean; error?: string; inquiryId?: string }> {
@@ -164,13 +160,8 @@ export async function placeInquiry(inquiryData: Inquiry): Promise<{ success: boo
     saveMockData(data);
     return { success: true, inquiryId: id };
   }
-  try {
-    const ref = doc(collection(db, 'inquiries'));
-    await setDoc(ref, { ...inquiryData, createdAt: Date.now() });
-    return { success: true, inquiryId: ref.id };
-  } catch (error: unknown) {
-    return { success: false, error: error instanceof Error ? error.message : 'Unable to send inquiry.' };
-  }
+  // Real mode — handled by /api/contact
+  return { success: true };
 }
 
 export async function getAddons(): Promise<Addon[]> {

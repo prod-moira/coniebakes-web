@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema, ContactFormData } from '@/lib/schemas/formSchema';
 import { placeInquiry } from '@/lib/db';
+import { isMockFirebase } from '@/lib/firebase';
 
 export default function ContactPage() {
   const [status, setStatus] = useState('');
@@ -32,15 +33,27 @@ export default function ContactPage() {
 
   const inquiryType = watch('inquiryType');
 
-  const submit = async (data: ContactFormData) => {
-    const result = await placeInquiry({
-      name: data.name.trim(),
-      email: data.email.trim(),
-      phone: data.phone.trim(),
-      inquiryType: data.inquiryType as 'Concern' | 'Special Order Request' | 'Feedback' | 'Other',
-      message: data.message.trim(),
+const submit = async (data: ContactFormData) => {
+    setStatus('');
+    setRateLimited(false);
+
+    // 1. Call the API first (Handles Real Mode: Rate Limit -> DB Write -> Email)
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone?.trim() || null,
+        inquiryType: data.inquiryType,
+        message: data.message.trim(),
+        feedbackConsent: data.feedbackConsent ?? false,
+      }),
     });
 
+    const result = await res.json();
+
+    // 2. Handle errors or rate limits from the API
     if (!result.success) {
       if (result.error === 'RATE_LIMITED') {
         setStatus('You recently sent a message. Please wait for a few minutes before sending again.');
@@ -51,18 +64,21 @@ export default function ContactPage() {
       return;
     }
 
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (res.ok) {
-      setStatus('Message sent successfully.');
-      reset();
-    } else {
-      setStatus('Unable to send your message.');
+    // 3. Mock mode fallback — updates local mock state array if working without Firebase connection
+    if (isMockFirebase) {
+      await placeInquiry({
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone?.trim() || '',
+        inquiryType: data.inquiryType as 'Concern' | 'Special Order Request' | 'Feedback' | 'Other',
+        message: data.message.trim(),
+        feedbackConsent: data.feedbackConsent ?? false,
+      });
     }
+
+    // 4. Everything succeeded
+    setStatus('Message sent successfully.');
+    reset();
   };
 
   return (
