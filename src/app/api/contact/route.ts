@@ -1,10 +1,26 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, email, phone, inquiryType, message, feedbackConsent } = body;
+
+    // Rate limit check — 1 inquiry per phone number per 15 mins
+    if (phone) {
+      const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
+      const recentInquiries = await adminDb
+        .collection('inquiries')
+        .where('phone', '==', phone)
+        .where('createdAt', '>', fifteenMinsAgo)
+        .get();
+
+      if (!recentInquiries.empty) {
+        return NextResponse.json({ success: false, error: 'RATE_LIMITED' }, { status: 429 });
+      }
+    }
+
     const consentLabel = inquiryType === 'Feedback' ? (feedbackConsent ? 'Yes' : 'No') : 'N/A';
 
 const emailContent = `

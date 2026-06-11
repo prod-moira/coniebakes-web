@@ -148,19 +148,6 @@ export async function placeOrder(orderData: Omit<Order, 'status'>): Promise<{ su
     return { success: true, orderId: `mock-${Date.now()}` };
   }
   try {
-    // Rate limit check — 1 order per phone number per 15 mins
-    const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
-    const recentOrderSnap = await getDocs(
-      query(
-        collection(db, 'orders'),
-        where('phoneNumber', '==', orderData.phoneNumber),
-        where('createdAt', '>', fifteenMinsAgo)
-      )
-    );
-    if (!recentOrderSnap.empty) {
-      return { success: false, error: 'RATE_LIMITED' };
-    }
-
     const orderRef = doc(collection(db, 'orders'));
     await setDoc(orderRef, { ...orderData, status: 'pending', createdAt: Date.now() });
     return { success: true, orderId: orderRef.id };
@@ -178,19 +165,6 @@ export async function placeInquiry(inquiryData: Inquiry): Promise<{ success: boo
     return { success: true, inquiryId: id };
   }
   try {
-    // Rate limit check — 1 inquiry per phone number per 15 mins
-    const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
-    const recentInquirySnap = await getDocs(
-      query(
-        collection(db, 'inquiries'),
-        where('phone', '==', inquiryData.phone),
-        where('createdAt', '>', fifteenMinsAgo)
-      )
-    );
-    if (!recentInquirySnap.empty) {
-      return { success: false, error: 'RATE_LIMITED' };
-    }
-
     const ref = doc(collection(db, 'inquiries'));
     await setDoc(ref, { ...inquiryData, createdAt: Date.now() });
     return { success: true, inquiryId: ref.id };

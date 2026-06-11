@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function POST(request: Request) {
   try {
@@ -17,6 +18,19 @@ export async function POST(request: Request) {
       total,
       specialInstructions
     } = body;
+
+    // Rate limit check — server-side via Admin SDK
+    const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
+    const recentOrders = await adminDb
+      .collection('orders')
+      .where('phoneNumber', '==', phoneNumber)
+      .where('createdAt', '>', fifteenMinsAgo)
+      .get();
+
+    if (!recentOrders.empty) {
+      return NextResponse.json({ success: false, error: 'RATE_LIMITED' }, { status: 429 });
+    }
+
 
 const emailContent = `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
