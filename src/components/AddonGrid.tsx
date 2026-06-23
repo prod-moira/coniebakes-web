@@ -18,7 +18,7 @@ export function AddonGrid({ addons, onSelectAddon }: AddonGridProps) {
       </p>
       
       <div className="addon-menu-grid">
-        {addons.map((addon) => (
+        {addons.filter((addon) => addon.available !== false).map((addon) => (
           <article
             key={addon.id}
             className="addon-menu-card"

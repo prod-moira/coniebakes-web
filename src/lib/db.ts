@@ -66,6 +66,7 @@ export interface Addon {
   price: number;
   image: string;
   isAddon: true;
+  available?: boolean;
 }
 
 const MOCK_ADDONS: Addon[] = [
@@ -166,14 +167,20 @@ export async function placeInquiry(inquiryData: Inquiry): Promise<{ success: boo
 
 export async function getAddons(): Promise<Addon[]> {
   if (isMockFirebase || !db) {
-    return MOCK_ADDONS;
+    return MOCK_ADDONS.filter(addon => addon.available !== false);
   }
   try {
     const snapshot = await getDocs(collection(db, 'addons'));
-    return snapshot.docs.map((addonDoc) => ({ id: addonDoc.id, ...addonDoc.data() })) as Addon[];
+    return snapshot.docs
+      .map((addonDoc) => ({
+        id: addonDoc.id,
+        ...addonDoc.data(),
+        available: addonDoc.data().available !== false
+      }))
+      .filter((addon: any) => addon.available !== false) as Addon[];
   } catch (error) {
     console.error('Failed to load addons from Firestore. Falling back to mock.', error);
-    return MOCK_ADDONS;
+    return MOCK_ADDONS.filter(addon => addon.available !== false);
   }
 }
 
